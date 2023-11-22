@@ -42,6 +42,7 @@ int pathFinding(sheep *individu, cage enclos){
     individu->posX = enclos.exitX - dx2;
     if (dx >= 0) individu->posY = enclos.exitY + dx2;
     else if (dx < 0) individu->posY = enclos.exitY - dx2;
+
     if (dy >= 0) individu->posY = enclos.exitY + dy2;
     else if (dy < 0) individu->posY = enclos.exitY - dy2;
     return 0;
