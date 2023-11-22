@@ -23,24 +23,39 @@ typedef struct sheep {
     double speed;
 }sheep;
 
+typedef struct obstacleCarre {
+    double posX1;
+    double posY1;
+    double posX2;
+    double posY2;
+
+}obstacleCarre;
 
 int pathFinding(sheep *individu, cage enclos){
-    double dx = abs(individu->posX - enclos.exitX);
-    double dy = abs(individu->posY - enclos.exitY);
+    double dx = individu->posX - enclos.exitX;
+    double dy = individu->posY - enclos.exitY;
     double dist = sqrt(dx*dx + dy*dy);
     double formerDist = dist;
     dist -= individu->speed;
-    double dx2 = dist*dx/formerDist;
-    double dy2 = dist*dy/formerDist;
+    double dx2 = dist*abs(dx)/formerDist;
+    double dy2 = dist*abs(dy)/formerDist;
     individu->posX = enclos.exitX - dx2;
-    individu->posY = enclos.exitY - dy2;
+    if (dx >= 0) individu->posY = enclos.exitY + dx2;
+    else if (dx < 0) individu->posY = enclos.exitY - dx2;
+    if (dy >= 0) individu->posY = enclos.exitY + dy2;
+    else if (dy < 0) individu->posY = enclos.exitY - dy2;
     return 0;
 }
 
 int main(void){
 
+<<<<<<< HEAD
     cage test_1_cage = {100, 100, 50, 0, 20};
     sheep test_1_sheep = {100, 100, 1, 1.5};
+=======
+    cage test_1_cage = {100, 100, 100, 50, 20};
+    sheep test_1_sheep = {0, 0, 1, 3};
+>>>>>>> cf4497cb56fdc9e36169ea4a211b51a7d9876520
     while((test_1_sheep.posX <= test_1_cage.exitX)){
         pathFinding(&test_1_sheep, test_1_cage);
         printf("(%f:%f)\n", test_1_sheep.posX, test_1_sheep.posY);
