@@ -24,7 +24,7 @@ typedef struct sheep {
 }sheep;
 
 
-int pathFinding(posSheepX, posSheepY, exitX, exitY, speed){
+int pathFinding(double posSheepX, double posSheepY, double exitX, double exitY, double speed){
     double dx = abs(posSheepX - exitX);
     double dy = abs(posSheepY - exitY);
     double dist = sqrt(dx*dx + dy*dy);
