@@ -12,6 +12,7 @@ typedef struct cage{
     double Y;
     double exitX;
     double exitY;
+    double exitSize;
 }cage;
 
 
