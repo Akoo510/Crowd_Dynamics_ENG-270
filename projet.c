@@ -50,7 +50,7 @@ int main(void){
     while((test_1_sheep.posX <= test_1_cage.exitX)){
         printf("yo");
         pathFinding(&test_1_sheep, test_1_cage);
-        printf("(%f:%f)\n", test_1_sheep.posX, test_1_sheep.posX);
+        printf("(%f:%f)\n", test_1_sheep.posX, test_1_sheep.posY);
     }
 
     return 0;
