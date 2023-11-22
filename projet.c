@@ -48,8 +48,8 @@ int main(void){
 
     //double avancement_X->test_1_sheep.posX;
     //double avancement_Y = test_1_sheep.posY;
-    while((test_1_sheep.posX != test_1_cage.exitX)&&(test_1_sheep.posX != test_1_cage.exitY)){
-        pathFinding(&test_1_sheep.posX, &test_1_sheep.posX, test_1_cage.exitX, test_1_cage.Y, test_1_sheep.speed);
+    while((test_1_sheep.posX != test_1_cage.exitX)&&(test_1_sheep.posY != test_1_cage.exitY)){
+        pathFinding(&test_1_sheep.posX, &test_1_sheep.posY, test_1_cage.exitX, test_1_cage.Y, test_1_sheep.speed);
         printf("(%f : %f)\n", test_1_sheep.posX, test_1_sheep.posX);
     }
 
