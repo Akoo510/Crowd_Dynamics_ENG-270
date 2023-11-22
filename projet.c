@@ -30,8 +30,8 @@ int pathFinding(sheep *individu, cage enclos){
     double dist = sqrt(dx*dx + dy*dy);
     double formerDist = dist;
     dist -= individu->speed;
-    double dx2 = formerDist*dx/dist;
-    double dy2 = formerDist*dy/dist;
+    double dx2 = dist*dx/formerDist;
+    double dy2 = dist*dy/formerDist;
     individu->posX = enclos.exitX - dx2;
     individu->posY = enclos.exitY - dy2;
     return 0;
@@ -48,9 +48,8 @@ int main(void){
     //double avancement_X->test_1_sheep.posX;
     //double avancement_Y = test_1_sheep.posY;
     while((test_1_sheep.posX <= test_1_cage.exitX)){
-        printf("yo");
         pathFinding(&test_1_sheep, test_1_cage);
-        printf("(%f:%f)\n", test_1_sheep.posX, test_1_sheep.posX);
+        printf("(%f:%f)\n", test_1_sheep.posX, test_1_sheep.posY);
     }
 
     return 0;
