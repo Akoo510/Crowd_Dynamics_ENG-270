@@ -37,11 +37,10 @@ int pathFinding(sheep *individu, cage enclos){
     return 0;
 }
 
-
 int main(void){
 
-    cage test_1_cage = {100, 100, 100, 50, 20};
-    sheep test_1_sheep = {50, 50, 1, 1};
+    cage test_1_cage = {100, 100, 50, 0, 20};
+    sheep test_1_sheep = {100, 100, 1, 1.5};
     while((test_1_sheep.posX <= test_1_cage.exitX)){
         pathFinding(&test_1_sheep, test_1_cage);
         printf("(%f:%f)\n", test_1_sheep.posX, test_1_sheep.posY);
