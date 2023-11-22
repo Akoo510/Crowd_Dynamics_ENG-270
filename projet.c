@@ -41,7 +41,7 @@ int pathFinding(double posSheepX, double posSheepY, double exitX, double exitY, 
 int main(void){
 
     cage test_1_cage = {100, 100, 100, 50, 20};
-    sheep test_1_sheep = {50, 50, 1};
+    sheep test_1_sheep = {50, 50, 1, 1};
 
     //int dist_sheep_exit_X = abs(test_1_sheep.posX - test_1_cage.exitX);
     //int dist_sheep_exit_Y = abs(test_1_sheep.posY - test_1_cage.exitY);
@@ -49,8 +49,8 @@ int main(void){
     double avancement_X = test_1_sheep.posX;
     double avancement_Y = test_1_sheep.posY;
     while((avancement_X != test_1_cage.exitX)&&(avancement_Y != test_1_cage.exitY)){
-        pathFinding(avancement_X, avancement_Y, test_1_cage.exitX, test_1_cage.Y);
-        printf("(%d : %d)\n", avancement_X, avancement_Y);
+        pathFinding(avancement_X, avancement_Y, test_1_cage.exitX, test_1_cage.Y, test_1_sheep.speed);
+        printf("(%f : %f)\n", avancement_X, avancement_Y);
     }
 
 
