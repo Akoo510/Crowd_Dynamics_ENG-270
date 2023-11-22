@@ -7,3 +7,14 @@
     - Les points veulent toujours aller vers la sortie
 */
 
+typedef struct sheep {
+    double posX;
+    double posY;
+    double rayon;
+} sheep;
+
+int pathFinding(posSheepX, posSheepY, exitX, exitY)
+{
+    
+    return 0;
+}
