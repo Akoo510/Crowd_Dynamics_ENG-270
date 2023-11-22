@@ -20,13 +20,20 @@ typedef struct sheep {
     double posX;
     double posY;
     double rayon;
+    double speed;
 }sheep;
 
 
-int pathFinding(posSheepX, posSheepY, exitX, exitY){
+int pathFinding(posSheepX, posSheepY, exitX, exitY, speed){
     double dx = abs(posSheepX - exitX);
     double dy = abs(posSheepY - exitY);
     double dist = sqrt(dx*dx + dy*dy);
+    double formerDist = dist;
+    dist -= speed;
+    double dx2 = formerDist*dx/dist;
+    double dy2 = formerDist*dy/dist;
+    posSheepX = exitX - dx2;
+    posSheepY = exitY - dy2;
     return 0;
 }
 
