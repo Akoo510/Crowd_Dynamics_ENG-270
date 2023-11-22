@@ -7,11 +7,19 @@
     - Les points veulent toujours aller vers la sortie
 */
 
+typedef struct cage{
+    double X;
+    double Y;
+    double exitX;
+    double exitY;
+}cage;
+
+
 typedef struct sheep {
     double posX;
     double posY;
     double rayon;
-} sheep;
+}sheep;
 
 int pathFinding(posSheepX, posSheepY, exitX, exitY)
 {
