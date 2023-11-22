@@ -21,8 +21,14 @@ typedef struct sheep {
     double rayon;
 }sheep;
 
-int pathFinding(posSheepX, posSheepY, exitX, exitY)
-{
+
+int pathFinding(posSheepX, posSheepY, exitX, exitY){
     
+    return 0;
+}
+
+
+int main(void){
+
     return 0;
 }
