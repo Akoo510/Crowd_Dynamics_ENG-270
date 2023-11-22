@@ -48,11 +48,6 @@ int pathFinding(sheep *individu, cage enclos){
 }
 
 int main(void){
-
-<<<<<<< HEAD
-    cage test_1_cage = {100, 100, 50, 0, 20};
-    sheep test_1_sheep = {100, 100, 1, 1.5};
-=======
     cage test_1_cage = {100, 100, 100, 50, 20};
     sheep test_1_sheep = {0, 0, 1, 3};
     while((test_1_sheep.posX <= test_1_cage.exitX)){
