@@ -28,7 +28,6 @@ typedef struct obstacleCarre {
     double posY1;
     double posX2;
     double posY2;
-
 }obstacleCarre;
 
 int pathFinding(sheep *individu, cage enclos){
@@ -45,6 +44,12 @@ int pathFinding(sheep *individu, cage enclos){
 
     if (dy >= 0) individu->posY = enclos.exitY + dy2;
     else if (dy < 0) individu->posY = enclos.exitY - dy2;
+    return 0;
+}
+
+int closestEdge(obstacleCarre obstacle, sheep individu, cage enclos){
+    if(individu.posX <= obstacle.posX1 && obstacle.posX1 <= enclos.exitX) || ()
+
     return 0;
 }
 
