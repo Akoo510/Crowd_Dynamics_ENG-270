@@ -47,8 +47,24 @@ int pathFinding(sheep *individu, cage enclos){
     return 0;
 }
 
-int whichEdge(obstacleCarre obstacle, sheep individu, cage enclos){
-    if(individu.posX <= obstacle.posX1 && obstacle.posX1 <= enclos.exitX) || ()
+int isCollision(obstacleCarre obstacle, sheep individu, cage enclos){
+    double sheepX = individu.posX;
+    double sheepY = individu.posY;
+    double edgeX1 = obstacle.posX1;
+    double edgeX2 = obstacle.posX2;
+    double edgeY3 = obstacle.posY1;
+    double edgeY4 = obstacle.posY2;
+    double exitX = enclos.exitX;
+    double exitY = enclos.exitY;
+    if (sheepX <= edgeX1 && sheepX <= edgeX2){
+        //WSHHHHHH COMMENT Y A TROP DE CONDITION; FAUT FAIRE LES 4 EDGES ENFT, PAS QUE 2
+    }
+    
+    return 0;
+}
+
+int whichEdge(obstacleCarre obstacle, sheep individu){
+    if(individu.posX <= obstacle.posX1 && obstacle.posX1 <= enclos.exitX) || ();
 
     return 0;
 }
