@@ -47,7 +47,7 @@ int pathFinding(sheep *individu, cage enclos){
     return 0;
 }
 
-int closestEdge(obstacleCarre obstacle, sheep individu, cage enclos){
+int whichEdge(obstacleCarre obstacle, sheep individu, cage enclos){
     if(individu.posX <= obstacle.posX1 && obstacle.posX1 <= enclos.exitX) || ()
 
     return 0;
