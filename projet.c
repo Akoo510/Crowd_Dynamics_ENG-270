@@ -28,6 +28,10 @@ typedef struct obstacleCarre {
     double posY1;
     double posX2;
     double posY2;
+    double posX3;
+    double posY3;
+    double posX4;
+    double posY4;
 }obstacleCarre;
 
 int pathFinding(sheep *individu, cage enclos){
@@ -50,13 +54,13 @@ int pathFinding(sheep *individu, cage enclos){
 int isCollision(obstacleCarre obstacle, sheep individu, cage enclos){
     double sheepX = individu.posX;
     double sheepY = individu.posY;
-    double edgeX1 = obstacle.posX1;
-    double edgeX2 = obstacle.posX2;
-    double edgeY3 = obstacle.posY1;
-    double edgeY4 = obstacle.posY2;
+    double edge1[2] = {obstacle.posX1, obstacle.posY1};
+    double edge2[2] = {obstacle.posX2, obstacle.posY2};
+    double edge3[2] = {obstacle.posX3, obstacle.posY3};
+    double edge4[2] = {obstacle.posX4, obstacle.posY4};
     double exitX = enclos.exitX;
     double exitY = enclos.exitY;
-    if (sheepX <= edgeX1 && sheepX <= edgeX2){
+    if (sheepX <= edge1[0] && sheepX <= exitX){
         //WSHHHHHH COMMENT Y A TROP DE CONDITION; FAUT FAIRE LES 4 EDGES ENFT, PAS QUE 2
     }
     
