@@ -26,8 +26,11 @@ for coordinate in data_points:
     print(coordinate)
 
 
+""" Bon la suite marche pas pour le render """
+
+
 # Initialize Pygame
-""" pygame.init()
+pygame.init()
 
 # Set up display
 width, height = 800, 600
@@ -79,4 +82,4 @@ while True:
     pygame.display.flip()
 
     # Control the frame rate
-    clock.tick(1000) """
+    clock.tick(1000)
