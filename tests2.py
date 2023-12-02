@@ -16,9 +16,12 @@ clibrary = ctypes.CDLL(os.path.join(path, 'tests2.so'))
 pathFinding = clibrary.findPath
 pathFinding.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
 pathFinding.restype = ctypes.POINTER(ctypes.c_int)
-result = pathFinding(0, 0, 10, 5, 10 , 10)
+result = pathFinding(0, 0, 10, 5, 10 , 10) 
+""" Argument :
+posX, posY, doorX, doorY, roomX, roomY
+ """
 
-data = result[:2*11]
+data = result[:2*11] #size of the matrix in C -> 2*(max(roomX or roomY)
 clibrary.free_memory(result)
 
 data_points = list(zip(data[0::2], data[1::2]))
@@ -82,4 +85,4 @@ while True:
     pygame.display.flip()
 
     # Control the frame rate
-    clock.tick(1000)
+    clock.tick(30)
