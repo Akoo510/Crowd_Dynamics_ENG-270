@@ -21,7 +21,7 @@ result = pathFinding(0, 0, 10, 5, 10 , 10)
 posX, posY, doorX, doorY, roomX, roomY
  """
 
-data = result[:2*11] #size of the matrix in C -> 2*(max(roomX or roomY)
+data = result[:2*11] #2*11 size of the matrix in C -> 2*(max(roomX or roomY)
 clibrary.free_memory(result)
 
 data_points = list(zip(data[0::2], data[1::2]))
