@@ -27,8 +27,8 @@ class Room(ctypes.Structure):
                 ("sizeRoom", Point)]
 
 # Load the shared library
-my_library = ctypes.CDLL(r"C:\Users\victo\OneDrive - epfl.ch\BA3\cmt\PROJET\tests persos\09_finalTom.so")  # Replace './09_finalTom.so' with the actual path to your shared library
-my_library = os.path.join(os.path.dirname(__file__), '01_templateC.so')
+#my_library = ctypes.CDLL(r"C:\Users\victo\OneDrive - epfl.ch\BA3\cmt\PROJET\tests persos\09_finalTom.so")  # Replace './09_finalTom.so' with the actual path to your shared library
+my_library = ctypes.CDLL(os.path.join(os.path.dirname(__file__), '01_templateC.so'))
 
 # Set up Tkinter window
 window = tk.Tk()
