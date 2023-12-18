@@ -16,17 +16,22 @@ clibrary = ctypes.CDLL(os.path.join(path, 'tests2.so'))
 pathFinding = clibrary.findPath
 pathFinding.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int]
 pathFinding.restype = ctypes.POINTER(ctypes.c_int)
-result = pathFinding(0, 0, 10, 5, 10 , 10) 
+
+startX = 50
+startY = 500
+roomX = 800
+roomY = 600
+#exitSize = 100
+result = pathFinding(startX, startY, roomX, int(roomY/2), roomX , roomY) 
 """ Argument :
 posX, posY, doorX, doorY, roomX, roomY
  """
-
-data = result[:2*11] #2*11 size of the matrix in C -> 2*(max(roomX or roomY)
+data = result[:2*(max(roomX, roomY/2) + 1)] #2*11 size of the matrix in C -> 2*(max(roomX or roomY))
 clibrary.free_memory(result)
 
 data_points = list(zip(data[0::2], data[1::2]))
-for coordinate in data_points:
-    print(coordinate)
+""" for coordinate in data_points:
+    print(coordinate) """
 
 
 """ Bon la suite marche pas pour le render """
@@ -59,7 +64,7 @@ def draw_moving_point(position):
 # Main game loop
 clock = pygame.time.Clock()
 point_index = 0
-moving_speed = 2
+moving_speed = 10
 
 while True:
     for event in pygame.event.get():
@@ -71,7 +76,7 @@ while True:
     screen.fill(black)
 
     # Draw the path
-    draw_path(data_points)
+    #draw_path(data_points)
 
     # Update the position of the moving point
     if point_index < len(data_points) - 1:
