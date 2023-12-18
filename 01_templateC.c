@@ -233,3 +233,9 @@ int main()
     freeMatrix(globalStructeArray);
     return 0;
 }
+
+/*
+Compile with :
+gcc -shared -o 01_templateC.so 01_templateC.c
+*/
+

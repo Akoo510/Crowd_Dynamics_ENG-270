@@ -1,5 +1,6 @@
 import ctypes
 import tkinter as tk
+import os
 
 # Define C structures in Python
 class Force(ctypes.Structure):
@@ -27,6 +28,7 @@ class Room(ctypes.Structure):
 
 # Load the shared library
 my_library = ctypes.CDLL(r"C:\Users\victo\OneDrive - epfl.ch\BA3\cmt\PROJET\tests persos\09_finalTom.so")  # Replace './09_finalTom.so' with the actual path to your shared library
+my_library = os.path.join(os.path.dirname(__file__), '01_templateC.so')
 
 # Set up Tkinter window
 window = tk.Tk()
