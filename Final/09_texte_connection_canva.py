@@ -1,5 +1,6 @@
 import ctypes
 import tkinter as tk
+import os
 
 # Define C structures in Python
 class Force(ctypes.Structure):
