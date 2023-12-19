@@ -49,23 +49,64 @@ void seedRandomGenerator(unsigned int seed)
 
 // Calculates the force that pushes the sheep towards the exit
 
+/// @brief Calculate on which side of the room is the door exit
+/// @return 0 : Left, 1 : Down, 2 : Right, 3 : Up
+int roomExitSide()
+{
+    if (room.exitRoom.start.x == 0 && room.exitRoom.end.x == 0) return 0;
+    if (room.exitRoom.start.y == room.sizeRoom.x && room.exitRoom.end.y == room.sizeRoom.x) return 1;
+    if (room.exitRoom.start.x == room.sizeRoom.x && room.exitRoom.end.x == room.sizeRoom.x) return 2;
+    if (room.exitRoom.start.y == 0 && room.exitRoom.end.y == 0) return 3;
+
+    // If none of the above conditions are met, then it should be impossible to reach this point
+    return -1;
+}
+
+// Calculates the force that pushes the sheep towards the exit
+
 /// @brief Calculates the force applied on the sheep so that a goes to the exit, and returns it normalized
 /// @param sheep Struct in which there'is a given x, y, radius, struct Force component, inRoom (bollean)
 void calculateForceTowardsExit(struct Sheep *sheep)
 {
+    int exitSide = roomExitSide();
     double dx = room.exitRoom.end.x - room.exitRoom.start.x;
     double dy = room.exitRoom.end.y - room.exitRoom.start.y;
-    double t = ((sheep->x - room.exitRoom.start.x) * dx + (sheep->y - room.exitRoom.start.y) * dy) / (dx * dx + dy * dy);
-    t = (t < 0) ? 0 : (t > 1) ? 1
-                              : t;
-    struct Point closestPoint = {room.exitRoom.start.x + t * dx, room.exitRoom.start.y + t * dy};
+    /* double t = ((sheep->x - room.exitRoom.start.x) * dx + (sheep->y - room.exitRoom.start.y) * dy) / (dx * dx + dy * dy);
+    t = (t < 0) ? 0 : (t > 1) ? 1 : t; */
+    struct Point closestPoint = {room.exitRoom.start.x + dx/2.0, room.exitRoom.start.y + dy / 2.0};
 
     // If the sheep coordinate are between the dooor, they go to a "very far" location
-    if (sheep->y >= room.exitRoom.start.y && sheep->y <= room.exitRoom.end.y)
+    
+    switch (exitSide)
     {
-        closestPoint.x = 2 * room.sizeRoom.x; // Set the x-coordinate to 2 times the room width
+    case 0:
+        if (sheep->y >= room.exitRoom.start.y && sheep->y <= room.exitRoom.end.y && sheep->x < (room.sizeRoom.x * 0.2))
+        {
+            closestPoint.x = -2 * room.sizeRoom.x;
+        }
+        break;
+    case 1:
+        if (sheep->x >= room.exitRoom.start.x && sheep->x <= room.exitRoom.end.x && sheep->y > room.sizeRoom.y * 0.8)
+        {
+            closestPoint.y = 3 * room.sizeRoom.y;
+        }
+        break;
+    case 2:
+        if (sheep->y >= room.exitRoom.start.y && sheep->y <= room.exitRoom.end.y && sheep->x > (room.sizeRoom.x * 0.8))
+        {
+            closestPoint.x = 3 * room.sizeRoom.x;
+        }
+        break;
+    case 3:
+        if (sheep->x >= room.exitRoom.start.x && sheep->x <= room.exitRoom.end.x && sheep->y < (room.sizeRoom.y * 0.2))
+        {
+            closestPoint.y = -2 * room.sizeRoom.y;
+        }
+        break;
+    default:
+        break;
     }
-
+    
     dx = closestPoint.x - sheep->x;
     dy = closestPoint.y - sheep->y;
     double distance = sqrt(dx * dx + dy * dy);
@@ -84,11 +125,31 @@ void calculateForceBetweenSheep(struct Sheep *sheep1, struct Sheep *sheep2)
 
     if (distance < (sheep1->r + sheep2->r))
     {
-        // Calculate repulsive force and add it to the current force
+        // Calculate repulsive force
         double force = (sheep1->r + sheep2->r - distance) / distance;
-        sheep1->force.fx -= force * dx;
-        sheep1->force.fy -= force * dy;
+
+        // Calculate new force components
+        double new_fx = force * dx;
+        double new_fy = force * dy;
+
+        // Check if the new direction is opposite to the current direction
+        if ((new_fx * sheep1->force.fx + new_fy * sheep1->force.fy) < 0)
+        {
+            // If it is, ignore the collision or handle it differently
+            // For example, you could reduce the force or set it to zero
+            new_fx = 0;
+            new_fy = 0;
+        }
+
+        // Add the new force to the current force
+        sheep1->force.fx -= new_fx;
+        sheep1->force.fy -= new_fy;
     }
+}
+
+void calculateForceWall()
+{
+
 }
 
 // Updates the position of a single sheep based on its velocity and acceleration
@@ -117,29 +178,76 @@ void updateForces(struct Sheep *sheepArray, int num_sheep)
 /// @return An array of coordinate X and Y (in the struct format : Point)
 struct Point *moveSheep(int nbSheep) // POUR APRüS VISU : struct Point *fonction lololililolililol
 {
+    int exitSide = roomExitSide();
     struct Point *coordinates = malloc(nbSheep * sizeof(struct Point));
     updateForces(globalStructeArray, nbSheep);
+    
     for (int i = 0; i < nbSheep; ++i)
     {
         struct Sheep *sheep = &globalStructeArray[i];
         if (!sheep->inRoom)
+            /* coordinates[i].x = 10.0;
+            coordinates[i].y = 10.0; */
             continue;
+        double newX = sheep->x + sheep->force.fx;
+        double newY = sheep->y + sheep->force.fy;
+        
+        //Is the Sheep inside the room ?
+        switch (exitSide)
+        {
+        case 0:
+            if (!(sheep->y > room.exitRoom.start.y &&  sheep->y < room.exitRoom.end.y) && (newX - sheep->r <= 0))
+                if (newX - sheep->r == 0) 
+                    sheep->force.fx = 0;
+                else
+                    sheep->force.fx = sheep->x + sheep->r;
+            if ((sheep->x + sheep->r) < 0)
+                sheep->inRoom = false;
+            break;
+        case 1:
+            if (!(sheep->x > room.exitRoom.start.x &&  sheep->x < room.exitRoom.end.x) && (newY + sheep->r >= room.sizeRoom.y))
+                if (newY + sheep->r == room.sizeRoom.y)
+                    sheep->force.fy = 0;
+                else
+                    sheep->force.fy = room.sizeRoom.y - (sheep->y + sheep->r);
+            if ((sheep->y - sheep->r) > room.sizeRoom.y)
+                sheep->inRoom = false;
+            break;
+        case 2:
+            if (!(sheep->y > room.exitRoom.start.y &&  sheep->y < room.exitRoom.end.y) && (newX + sheep->r >= room.sizeRoom.x))
+            if  (newX + sheep->r == room.sizeRoom.x)
+                sheep->force.fx = 0;
+            else 
+                sheep->force.fx = room.sizeRoom.x - (sheep->x + sheep->r);
+            if ((sheep->x - sheep->r) < room.sizeRoom.x)   
+                sheep->inRoom = false;
+            break;
+        case 3:
+            if (!(sheep->x > room.exitRoom.start.x &&  sheep->x < room.exitRoom.end.x) && (newY - sheep->r <= 0))
+                if (newY - sheep->r == 0)
+                    sheep->force.fy = 0;
+                else
+                    sheep->force.fy = sheep->y + sheep->r;
+            if ((sheep->y + sheep->r) < 0)
+                sheep->inRoom = false;
+            break;
+        default:
+            break;
+        }
         sheep->x += sheep->force.fx;
         sheep->y += sheep->force.fy;
-        if ((sheep->x + sheep->r) >= room.sizeRoom.x)
-            sheep->inRoom = false;
-    }
-    for (int i = 0; i < nbSheep; i++)
-    {
-        coordinates[i].x = globalStructeArray[i].x;
-        coordinates[i].y = globalStructeArray[i].y;
+        if (sheep->inRoom)
+        {
+            coordinates[i].x = globalStructeArray[i].x;
+            coordinates[i].y = globalStructeArray[i].y;
+        }
     }
     return coordinates;
 }
 
 /// @brief Generates person at random positions
 /// @param nbBots Initial number of person in the room
-/// @param radius Radius of the person inthe room
+/// @param radius Radius of the person in the room
 void generateRandomSheeps(int nbBots, double radius)
 {
     globalStructeArray = malloc(nbBots * sizeof(struct Sheep));
@@ -168,7 +276,7 @@ void generateRandomSheeps(int nbBots, double radius)
         globalStructeArray[i].force.fx = 0;
         globalStructeArray[i].force.fy = 0;
         globalStructeArray[i].inRoom = true;
-        printf("x1: %f, y1: %f\n", globalStructeArray[i].x, globalStructeArray[i].y);
+        //printf("x1: %f, y1: %f\n", globalStructeArray[i].x, globalStructeArray[i].y);
     }
 }
 

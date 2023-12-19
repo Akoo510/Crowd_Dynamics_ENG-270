@@ -180,9 +180,9 @@ def start_simulation():
     my_library.seedRandomGenerator(seed)
 
     # Generate room and random sheeps
-    room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y = 400.0, 400.0, 400, 100, 400, 120
+    room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y = 400.0, 400.0, 180, 400, 220, 400
     my_library.generateRoom(room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y)
-    sheep_array = my_library.generateRandomSheeps(nbSheep, 1.0)
+    sheep_array = my_library.generateRandomSheeps(nbSheep, 5.0)
 
     # Start the simulation loop
     simulate_movement()
