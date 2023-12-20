@@ -151,15 +151,15 @@ void calculateForceBetweenSheep(struct Sheep *sheep1, struct Sheep *sheep2)
 
 /// @brief Updates the position of all the sheep (takes into account the sheep around and the coordinate of the exit)
 /// @param sheepArray the matrix of sheeps position and other parameter of the struct
-/// @param num_sheep the number of sheep in the room initially
-void updateForces(struct Sheep *sheepArray, int num_sheep)
+/// @param nbSheep number of sheep in the room initially
+void updateForces(struct Sheep *sheepArray, int nbSheep)
 {
-    for (int i = 0; i < num_sheep; ++i)
+    for (int i = 0; i < nbSheep; ++i)
     {
         if (sheepArray[i].inRoom)
         {
             calculateForceTowardsExit(&sheepArray[i]);
-            for (int j = 0; j < num_sheep; ++j)
+            for (int j = 0; j < nbSheep; ++j)
             {
                 if (i != j && sheepArray[j].inRoom)
                 {
