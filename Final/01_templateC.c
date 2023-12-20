@@ -76,7 +76,7 @@ void calculateForceTowardsExit(struct Sheep *sheep)
     double dy = room.exitRoom.end.y - room.exitRoom.start.y;
     struct Point closestPoint = {room.exitRoom.start.x + dx / 2.0, room.exitRoom.start.y + dy / 2.0};
 
-    // If the sheep coordinate are between the dooor, they go to a "very far" location (like this we can see them exit)
+    // If the sheep coordinates are between the dooor, they go to a "very far" location (like this we can see them exit)
     switch (exitSide)
     {
     case 0:
@@ -134,7 +134,7 @@ void calculateForceBetweenSheep(struct Sheep *sheep1, struct Sheep *sheep2)
         double new_fx = force * dx;
         double new_fy = force * dy;
 
-        // Check if the new direction is opposite to the current direction
+        // Checks if the new direction is opposite to the current direction
         // To avoid the sheep going backwards
         if ((new_fx * sheep1->force.fx + new_fy * sheep1->force.fy) < 0)
         {
@@ -278,7 +278,8 @@ void generateRandomSheeps(int nbBots, double radius)
         do
         {
             overlap = 0;
-            // The parameter after the rand enables to not place sheep in wall
+
+            // The parameter after the rand() enables to not place sheep in wall
             globalStructeArray[i].x = radius + (double)rand() / RAND_MAX * (room.sizeRoom.x - 2 * radius);
             globalStructeArray[i].y = radius + (double)rand() / RAND_MAX * (room.sizeRoom.y - 2 * radius);
             for (int j = 0; j < i; ++j)
