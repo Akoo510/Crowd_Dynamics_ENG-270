@@ -135,10 +135,10 @@ void calculateForceBetweenSheep(struct Sheep *sheep1, struct Sheep *sheep2)
         double new_fy = force * dy;
 
         // Check if the new direction is opposite to the current direction
+        // To avoid the sheep going backwards
         if ((new_fx * sheep1->force.fx + new_fy * sheep1->force.fy) < 0)
         {
-            // If it is, ignore the collision or handle it differently
-            // For example, you could reduce the force or set it to zero
+            // If it is, set the force to zero
             new_fx = 0;
             new_fy = 0;
         }
@@ -149,7 +149,7 @@ void calculateForceBetweenSheep(struct Sheep *sheep1, struct Sheep *sheep2)
     }
 }
 
-/// @brief Updates the position of all the sheep (takes into account the sheep around and the coordinate of the exit)
+/// @brief Updates the position of all the sheep with respect to the different forces present (takes into account the sheep around and the coordinate of the exit)
 /// @param sheepArray the matrix of sheeps position and other parameter of the struct
 /// @param nbSheep number of sheep in the room initially
 void updateForces(struct Sheep *sheepArray, int nbSheep)
@@ -177,7 +177,7 @@ void handleExitSide0(struct Sheep *sheep, double newX)
         if (newX - sheep->r == 0)
             sheep->force.fx = 0;
         else
-            sheep->force.fx = - sheep->x + sheep->r;
+            sheep->force.fx = -sheep->x + sheep->r;
     if ((sheep->x + sheep->r) < 0)
         sheep->inRoom = false;
 }
@@ -213,7 +213,7 @@ void handleExitSide3(struct Sheep *sheep, double newY)
         if (newY - sheep->r == 0)
             sheep->force.fy = 0;
         else
-            sheep->force.fy = - sheep->y + sheep->r;
+            sheep->force.fy = -sheep->y + sheep->r;
     if ((sheep->y + sheep->r) < 0)
         sheep->inRoom = false;
 }
@@ -223,16 +223,18 @@ void handleExitSide3(struct Sheep *sheep, double newY)
 /// @return An array of coordinate X and Y (in the struct format : Point)
 struct Point *moveSheep(int nbSheep)
 {
+    // Creates a matrix to return
     struct Point *coordinates = malloc(nbSheep * sizeof(struct Point));
     updateForces(globalStructeArray, nbSheep);
 
+    // Update the position of all the sheep
     for (int i = 0; i < nbSheep; ++i)
     {
         struct Sheep *sheep = &globalStructeArray[i];
         double newX = sheep->x + sheep->force.fx;
         double newY = sheep->y + sheep->force.fy;
 
-        // If the sheep is inside the room, we update so that it does not collide with the wall
+        // If the sheep is inside the room and close to a wall, we update its position so that it does not collide with it
         if (sheep->inRoom)
         {
             switch (roomExitSide())
@@ -266,14 +268,17 @@ struct Point *moveSheep(int nbSheep)
 /// @param radius Radius of the person in the room
 void generateRandomSheeps(int nbBots, double radius)
 {
+    // Creates a dynamic array to store the sheeps positions
     globalStructeArray = malloc(nbBots * sizeof(struct Sheep));
     for (int i = 0; i < nbBots; ++i)
     {
-        // avoid sheep
+        // Checks wether there's is already a sheep in the given coordinate
+        // And tries other coordinates if a sheep is already present
         int overlap;
         do
         {
             overlap = 0;
+            // The parameter after the rand enables to not place sheep in wall
             globalStructeArray[i].x = radius + (double)rand() / RAND_MAX * (room.sizeRoom.x - 2 * radius);
             globalStructeArray[i].y = radius + (double)rand() / RAND_MAX * (room.sizeRoom.y - 2 * radius);
             for (int j = 0; j < i; ++j)
@@ -288,11 +293,12 @@ void generateRandomSheeps(int nbBots, double radius)
                 }
             }
         } while (overlap);
+
+        // Finally we initialize all the other values
         globalStructeArray[i].r = radius;
         globalStructeArray[i].force.fx = 0;
         globalStructeArray[i].force.fy = 0;
         globalStructeArray[i].inRoom = true;
-        // printf("x1: %f, y1: %f\n", globalStructeArray[i].x, globalStructeArray[i].y);
     }
 }
 
