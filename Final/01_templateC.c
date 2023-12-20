@@ -177,7 +177,7 @@ void handleExitSide0(struct Sheep *sheep, double newX)
         if (newX - sheep->r == 0)
             sheep->force.fx = 0;
         else
-            sheep->force.fx = sheep->x + sheep->r;
+            sheep->force.fx = - sheep->x + sheep->r;
     if ((sheep->x + sheep->r) < 0)
         sheep->inRoom = false;
 }
@@ -202,7 +202,7 @@ void handleExitSide2(struct Sheep *sheep, double newX)
             sheep->force.fx = 0;
         else
             sheep->force.fx = room.sizeRoom.x - (sheep->x + sheep->r);
-    if ((sheep->x - sheep->r) < room.sizeRoom.x)
+    if ((sheep->x - sheep->r) > room.sizeRoom.x)
         sheep->inRoom = false;
 }
 
@@ -213,7 +213,7 @@ void handleExitSide3(struct Sheep *sheep, double newY)
         if (newY - sheep->r == 0)
             sheep->force.fy = 0;
         else
-            sheep->force.fy = sheep->y + sheep->r;
+            sheep->force.fy = - sheep->y + sheep->r;
     if ((sheep->y + sheep->r) < 0)
         sheep->inRoom = false;
 }
