@@ -1,6 +1,7 @@
 import ctypes
 import tkinter as tk
 import os
+from tkinter import messagebox
 
 # Define C structures in Python
 class Force(ctypes.Structure):
@@ -63,105 +64,12 @@ my_library.moveSheep.restype = ctypes.POINTER(Point)
 # Function to free matrix memory
 my_library.freeMatrix.argtypes = [ctypes.POINTER(Sheep)]
 
-
-##### PROTOTYPE 1 : Marche, ct le premier prototype qui allait SUPER VITE et qui fermait le canva après la simulation
-'''# Example usage
-def main():
-    nbSheep = 7
-    seed = 43
-
-    # Seed random generator
-    my_library.seedRandomGenerator(seed)
-
-    # Generate room and random sheeps
-    room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y = 400.0, 400.0, 200, 400, 210, 400
-    my_library.generateRoom(room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y)
-    sheep_array = my_library.generateRandomSheeps(nbSheep, 1.0)
-
-    # Move sheeps until they all exit the room
-    while my_library.sheepStillInside(nbSheep):
-        # Call moveSheep function
-        result = my_library.moveSheep(nbSheep)
-
-        # Clear previous sheep drawings
-        canvas.delete("sheep")
-
-        # Draw new sheep positions
-        for i in range(nbSheep):
-            x, y = result[i].x, result[i].y
-            canvas.create_oval(x - 5, y - 5, x + 5, y + 5, fill="blue", tags="sheep")
-
-        # Update the canvas
-        window.update()
-
-        # Free allocated memory using the correct type
-        my_library.freeMatrix(ctypes.cast(result, ctypes.POINTER(Sheep)))
-
-    # Close the window after simulation is complete
-    window.destroy()
-
-if __name__ == "__main__":
-    main()'''
-
-
-############# PROTOTYPE 2 : Marche, créee une simulation avec des points qui bougent et avec bouton clickable
-'''# Global variables for simulation control
-simulation_speed = 10  # Adjust this value to control the simulation speed (milliseconds)
-nbSheep = 7
-seed = 43
-sheep_array = None  # To store the array of sheep
-
-# Example usage
-def start_simulation():
-    global sheep_array
-    # Seed random generator
-    my_library.seedRandomGenerator(seed)
-
-    # Generate room and random sheeps
-    room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y = 400.0, 400.0, 200, 400.0, 210, 400
-    my_library.generateRoom(room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y)
-    sheep_array = my_library.generateRandomSheeps(nbSheep, 1.0)
-
-    # Start the simulation loop
-    simulate_movement()
-
-def simulate_movement():
-    global sheep_array
-    # Call moveSheep function
-    result = my_library.moveSheep(nbSheep)
-
-    # Clear previous sheep drawings
-    canvas.delete("sheep")
-
-    # Draw new sheep positions
-    for i in range(nbSheep):
-        x, y = result[i].x, result[i].y
-        canvas.create_oval(x - 5, y - 5, x + 5, y + 5, fill="blue", tags="sheep")
-
-    # Update the canvas
-    window.update()
-
-    # Free allocated memory using the correct type
-    my_library.freeMatrix(ctypes.cast(result, ctypes.POINTER(Sheep)))
-
-    # Check if any sheep is still inside, and schedule the next simulation step
-    if my_library.sheepStillInside(nbSheep):
-        window.after(simulation_speed, simulate_movement)
-
-# Button to start the simulation
-start_button = tk.Button(window, text="Start Simulation", command=start_simulation)
-start_button.pack()
-
-# Keep the window open after all sheep exit
-window.mainloop()'''
-
-
 ############## PROTOTYPE 3 : marche, crée un timer et un bouton non clickable 2 fois
 import time
 
 # Global variables for simulation control
 simulation_speed = 10  # Adjust this value to control the simulation speed (milliseconds)
-nbSheep = 400
+nbSheep = 200
 seed = int(time.time())
 sheep_array = None  # To store the array of sheep
 start_time = None  # To store the start time
@@ -180,7 +88,7 @@ def start_simulation():
     my_library.seedRandomGenerator(seed)
 
     # Generate room and random sheeps
-    room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y = 400.0, 400.0, 100.0, 400, 140.0, 400
+    room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y = 400.0, 400.0, 400, 180, 400, 220
     my_library.generateRoom(room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y)
     sheep_array = my_library.generateRandomSheeps(nbSheep, 5.0)
 
@@ -195,9 +103,12 @@ def simulate_movement():
     # Clear previous sheep drawings
     canvas.delete("sheep")
 
+    canvas.create_rectangle(50, 50, 50 + 400, 50 + 400, outline="black", width=4)
+    canvas.create_line(450, 230, 450, 270, fill="red", width=4)
+
     # Draw new sheep positions
     for i in range(nbSheep):
-        x, y = result[i].x, result[i].y
+        x, y = result[i].x + 50, result[i].y + 50
         canvas.create_oval(x - 5, y - 5, x + 5, y + 5, fill="blue", tags="sheep")
 
     # Update the canvas
@@ -206,14 +117,19 @@ def simulate_movement():
     # Free allocated memory using the correct type
     my_library.freeMatrix(ctypes.cast(result, ctypes.POINTER(Sheep)))
 
-    # Check if any sheep is still inside, and schedule the next simulation step
+    # Check if any sheep is still inside
     if my_library.sheepStillInside(nbSheep):
         # Calculate elapsed time
         elapsed_time = time.time() - start_time
         elapsed_time_str = f"Elapsed Time: {int(elapsed_time)} seconds"
         chronometer_label.config(text=elapsed_time_str)
 
+        # Schedule the next simulation step
         window.after(simulation_speed, simulate_movement)
+    else:
+        # Display a message when all sheep have exited
+        messagebox.showinfo("Simulation Complete", "All sheep have exited the room.")
+
 
 # Button to start the simulation
 start_button = tk.Button(window, text="Start Simulation", command=start_simulation)
