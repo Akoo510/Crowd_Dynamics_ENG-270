@@ -53,6 +53,9 @@ my_library.generateRoom.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.c_d
 my_library.generateRandomSheeps.argtypes = [ctypes.c_int, ctypes.c_double]
 my_library.generateRandomSheeps.restype = ctypes.POINTER(Sheep)
 
+# Function to generate a round object
+my_library.generateRoundObject.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.c_double]
+
 # Function to check if any sheep is still inside the room
 my_library.sheepStillInside.argtypes = [ctypes.c_int]
 my_library.sheepStillInside.restype = ctypes.c_int
@@ -90,6 +93,7 @@ def start_simulation():
     # Generate room and random sheeps
     room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y = 400.0, 400.0, 180, 400, 220, 400
     my_library.generateRoom(room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y)
+    my_library.generateRoundObject(200.0, 300.0, 50.0)
     sheep_array = my_library.generateRandomSheeps(nbSheep, 5.0)
 
     # Start the simulation loop
@@ -105,7 +109,8 @@ def simulate_movement():
 
     canvas.create_rectangle(50, 50, 50 + 400, 50 + 400, outline="black", width=4)
     canvas.create_line(450, 230, 450, 270, fill="red", width=4)
-    
+    canvas.create_oval(200 + 50 - 25, 300 + 50 - 25, 200 + 50 + 25, 300 + 50 + 25)
+
     # Draw new sheep positions
     for i in range(nbSheep):
         x, y = result[i].x + 50, result[i].y + 50
@@ -129,6 +134,7 @@ def simulate_movement():
     else:
         # Display a message when all sheep have exited
         messagebox.showinfo("Simulation Complete", "All sheep have exited the room.")
+
 
 # Button to start the simulation
 start_button = tk.Button(window, text="Start Simulation", command=start_simulation)

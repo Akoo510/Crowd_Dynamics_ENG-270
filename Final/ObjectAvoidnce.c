@@ -45,7 +45,10 @@ struct RoundObj
     double radius;
 };
 
+
 struct Room room;
+
+struct RoundObj disk;
 
 struct Sheep *globalStructeArray = NULL;
 
@@ -155,6 +158,51 @@ void calculateForceBetweenSheep(struct Sheep *sheep1, struct Sheep *sheep2)
     }
 }
 
+void generateRoundObject(double x, double y, double radius)
+{
+    struct Point coordinate = {x, y};
+    disk.coordinate = coordinate;
+    disk.radius = radius;
+}
+
+void avoidRoundObstacle(struct Sheep *sheep)
+{
+    double dx = disk.coordinate.x - sheep->x;
+    double dy = disk.coordinate.y - sheep->y;
+    double distance = sqrt(dx * dx + dy * dy);
+
+    if (distance < (sheep->r + disk.radius))
+    {
+        // Normalize the direction vector
+        dx /= distance;
+        dy /= distance;
+
+        // Calculate the dot product of the direction vector and the sheep's force
+        double dot_product = dx * sheep->force.fx + dy * sheep->force.fy;
+
+        // If the sheep is moving towards the obstacle
+        if (dot_product > 0)
+        {
+            // Calculate the cross product of the direction vector and the sheep's force
+            double cross_product = dx * sheep->force.fy - dy * sheep->force.fx;
+
+            // Determine which side to bypass the obstacle
+            if (cross_product > 0)
+            {
+                // Bypass on the left side
+                sheep->force.fx += -dy;
+                sheep->force.fy += dx;
+            }
+            else
+            {
+                // Bypass on the right side
+                sheep->force.fx += dy;
+                sheep->force.fy += -dx;
+            }
+        }
+    }
+}
+
 /// @brief Updates the position of all the sheep with respect to the different forces present (takes into account the sheep around and the coordinate of the exit)
 /// @param sheepArray the matrix of sheeps position and other parameter of the struct
 /// @param nbSheep number of sheep in the room initially
@@ -165,6 +213,7 @@ void updateForces(struct Sheep *sheepArray, int nbSheep)
         if (sheepArray[i].inRoom)
         {
             calculateForceTowardsExit(&sheepArray[i]);
+            //avoidRoundObstacle(&sheepArray[i]);
             for (int j = 0; j < nbSheep; ++j)
             {
                 if (i != j && sheepArray[j].inRoom)
@@ -261,6 +310,8 @@ struct Point *moveSheep(int nbSheep, double margin)
                 break;
             }
         }
+
+        avoidRoundObstacle(sheep);
 
         // We update the position in the coordinate matrix which will be send to the python code
         coordinates[i].x = sheep->x += sheep->force.fx + margin;
