@@ -4,7 +4,10 @@
 This repository contains C code for simulating the movement of sheep in a room. The simulation includes forces that drive the sheep towards an exit door while avoiding collisions with each other and the room walls.
 
 ## Project structure
-[Code](./code)
+[code/](./code) : This folder contains the program code
+[bin/](./bin) : This folder contains the library created after compiling C code
+[code/](./code) :
+
 
 ## C file
 ### Features
