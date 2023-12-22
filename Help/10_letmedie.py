@@ -11,6 +11,32 @@ import ctypes
 import os
 import time 
 
+# Compile automatically to create the shared library
+
+import subprocess
+import ctypes
+
+# Step 1: Compile C code to create shared library (.so file)
+def compile_c_code():
+    compile_command = "gcc -shared -o 10_theCode.so 10_theCode.c"
+    subprocess.run(compile_command, shell=True)
+
+# Step 2: Load the shared library using ctypes
+def load_shared_library():
+    try:
+        # Load the shared library
+        c_lib = ctypes.CDLL("./10_theCode.so")
+
+        return c_lib
+    except OSError:
+        print("Error: Unable to load the shared library.")
+        return None
+    
+
+compile_c_code()
+my_library = load_shared_library()
+
+
 # Define C structures in Python
 class Force(ctypes.Structure):
     _fields_ = [("fx", ctypes.c_double),
@@ -35,7 +61,8 @@ class Room(ctypes.Structure):
     _fields_ = [("exitRoom", Line),
                 ("sizeRoom", Point)]
     
-my_library = ctypes.CDLL(os.path.join(os.path.dirname(__file__), '10_theCode.so'))
+    
+#my_library = ctypes.CDLL(os.path.join(os.path.dirname(__file__), '10_theCode.so'))
 #my_library = ctypes.CDLL(os.path.join(os.path.dirname(__file__), '09_finalTom.so'))
 
 # Seed random generator function
@@ -366,7 +393,7 @@ class DataEntryForm:
     def get_simulation_parameters(self):
         num_individuals = self.num_individuals
         individual_speed = self.individual_speed
-        individual_radius = self.individual_vars['individual_type'].get()
+        individual_radius = self.radius_dict[self.individual_vars['individual_type'].get()]
         return num_individuals, individual_speed, individual_radius
 
     def get_exit_coordinates(self):
@@ -408,7 +435,7 @@ window.geometry(f"{canvas_width}x{canvas_height}")
 # Create canvas
 
 # Global variables for simulation control
-simulation_speed = individual_speed  # Adjust this value to control the simulation speed (milliseconds)
+simulation_speed = int(individual_speed)  # Adjust this value to control the simulation speed (milliseconds)
 nbSheep = num_individuals
 seed = int(time.time())
 sheep_array = None  # To store the array of sheep
@@ -459,7 +486,7 @@ def start_simulation():
 
     # Generate room and random sheeps
     my_library.generateRoom(xRoom_px, yRoom_px, x0_exit_px, y0_exit_px, xf_exit_px, yf_exit_px)
-    sheep_array = my_library.generateRandomSheeps(nbSheep, individual_radius)
+    sheep_array = my_library.generateRandomSheeps(nbSheep, individual_radius_px)
 
     # Start the simulation loop
     simulate_movement()
@@ -478,7 +505,7 @@ def simulate_movement():
     # Draw new sheep positions
     for i in range(nbSheep):
         x, y = result[i].x + margin, result[i].y + margin
-        canvas.create_oval(x - individual_radius, y - individual_radius, x + individual_radius, y + individual_radius, fill="blue", tags="sheep")
+        canvas.create_oval(x - individual_radius_px, y - individual_radius_px, x + individual_radius_px, y + individual_radius_px, fill="blue", tags="sheep")
 
     # Update the canvas
     window.update()
