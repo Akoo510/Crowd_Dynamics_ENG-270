@@ -12,7 +12,7 @@ This repository contains C code for simulating the movement of sheep in a room. 
 
 ## Implementation
 * The calculation of the position is done by C and is then given to Python via a shared library that can be used by the `ctypes` module.
-* Python actually renders the simulation
+* Python actually renders the simulation with the use of `tkinter`
 * A matric of coordinate x and y is passed from C to Python
 
 ## Instruction
@@ -21,6 +21,8 @@ To view the simulation run the Python code, it will :
 * Directly run the simulation once it's done
 
 ## Requirements
+
+The code requires no instalation on python side, it can be run directcly (as `tkinter` is usually by default installed with python)
 
 ```
 $ python --version
