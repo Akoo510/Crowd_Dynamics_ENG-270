@@ -39,12 +39,6 @@ struct Room
     struct Point sizeRoom;
 };
 
-struct RoundObj
-{
-    struct Point coordinate;
-    double radius;
-};
-
 struct Room room;
 
 struct Sheep *globalStructeArray = NULL;
