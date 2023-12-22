@@ -69,7 +69,7 @@ import time
 
 # Global variables for simulation control
 simulation_speed = 10  # Adjust this value to control the simulation speed (milliseconds)
-nbSheep = 300
+nbSheep = 200
 seed = int(time.time())
 sheep_array = None  # To store the array of sheep
 start_time = None  # To store the start time
@@ -88,7 +88,7 @@ def start_simulation():
     my_library.seedRandomGenerator(seed)
 
     # Generate room and random sheeps
-    room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y = 400.0, 400.0, 180, 400, 220, 400
+    room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y = 400.0, 400.0, 400, 180, 400, 220
     my_library.generateRoom(room_width, room_height, exit_start_x, exit_start_y, exit_end_x, exit_end_y)
     sheep_array = my_library.generateRandomSheeps(nbSheep, 5.0)
 
@@ -98,14 +98,14 @@ def start_simulation():
 def simulate_movement():
     global sheep_array, start_time
     # Call moveSheep function
-    result = my_library.moveSheep(nbSheep, 50)
+    result = my_library.moveSheep(nbSheep)
 
     # Clear previous sheep drawings
     canvas.delete("sheep")
 
     canvas.create_rectangle(50, 50, 50 + 400, 50 + 400, outline="black", width=4)
     canvas.create_line(450, 230, 450, 270, fill="red", width=4)
-    
+
     # Draw new sheep positions
     for i in range(nbSheep):
         x, y = result[i].x + 50, result[i].y + 50
@@ -129,6 +129,7 @@ def simulate_movement():
     else:
         # Display a message when all sheep have exited
         messagebox.showinfo("Simulation Complete", "All sheep have exited the room.")
+
 
 # Button to start the simulation
 start_button = tk.Button(window, text="Start Simulation", command=start_simulation)
