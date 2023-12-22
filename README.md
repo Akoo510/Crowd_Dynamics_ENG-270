@@ -1,5 +1,10 @@
-# Sheep Movement Simulation
+# Crowd Dynamics Simulation
+
+## Project description
 This repository contains C code for simulating the movement of sheep in a room. The simulation includes forces that drive the sheep towards an exit door while avoiding collisions with each other and the room walls.
+
+## Project structure
+[Code](./code)
 
 ## C file
 ### Features
