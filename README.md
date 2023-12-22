@@ -60,9 +60,3 @@ But it should work with any above versions.
 - **Wall for Exit:** The wall on which the exit is located (e.g., Right, Left, Top, Bottom).
 
 - **Exit Coordinates:** The position along the chosen wall where the exit is located.
-
-
-Hwo to use C in python :
-https://stackoverflow.com/questions/51856138/how-to-import-a-c-file-into-python
-https://book.pythontips.com/en/latest/python_c_extension.html
-
