@@ -8,7 +8,6 @@ from tkinter import Toplevel
 import subprocess
 import ctypes
 
-import os
 import time 
 
 # Compile automatically to create the shared library
@@ -212,7 +211,7 @@ class DataEntryForm:
         individual_speed = self.individual_vars['individual_speed'].get()
 
         if not num_individuals.isdigit() or int(num_individuals) == 0 or not individual_type or not individual_speed.isdigit() or int(individual_speed) == 0:
-            messagebox.showwarning(title="Error", message="Invalid input. Please enter valid, positive and non-zero values.")
+            messagebox.showwarning(title="Error", message="Invalid input. Please enter valid, positive and non-zero integers.")
         else:
             # If validation is successful, move to the next step, disable step 1 widgets, and create step 2 widgets
             self.disable_step1_widgets()
@@ -233,7 +232,7 @@ class DataEntryForm:
             x_room = float(x_room_str)
             y_room = float(y_room_str)
             num_individuals = int(num_individuals_str)
-            individual_speed = float(individual_speed_str)
+            individual_speed = int(individual_speed_str)
         except ValueError:
             messagebox.showwarning(title="Error", message="Invalid input. Please enter valid numeric values for room dimensions and number of individuals.")
             return
@@ -251,7 +250,7 @@ class DataEntryForm:
                 messagebox.showwarning(title="Error", message="Room dimensions are too small to accommodate all individuals.")
             else:
             # Store additional attributes for later use
-                self.individual_speed = float(individual_speed)
+                self.individual_speed = int(individual_speed)
                 self.num_individuals = int(num_individuals)
 
                 # If all conditions are met, move to the next step, disable step 2 widgets, and create step 3 widgets
@@ -296,7 +295,7 @@ class DataEntryForm:
         # Disable step 3 widgets after successful validation
         self.disable_step3_widgets()
         # Show info message after disabling step 3 widgets
-        messagebox.showinfo(title="Simulation", message="Simulation completed successfully!")
+        messagebox.showinfo(title="Data Entry Form completed", message="To start simulation, please close this information window and the Data Entry Form.")
 
     def disable_step1_widgets(self):
         # Disable step 1 widgets
@@ -423,29 +422,25 @@ if __name__ == "__main__":
 
 ########################################
 
-window = tk.Tk()
-window.title("Crowd Movement Simulation")
-
-# Canvas dimensions
-canvas_width = 1200
-canvas_height = 700
-
-window.geometry(f"{canvas_width}x{canvas_height}")
-
-# Create canvas
-
-# Global variables for simulation control
-simulation_speed = int(individual_speed)  # Adjust this value to control the simulation speed (milliseconds)
-nbSheep = num_individuals
+margin = 50
 seed = int(time.time())
 sheep_array = None  # To store the array of sheep
 start_time = None  # To store the start time
 
-margin = 50
+exit_length = max(xf_exit - x0_exit, yf_exit - y0_exit)
+
+window = tk.Tk()
+window.title("Crowd Movement Simulation")
+window.geometry("1200x700") # arbitrary value
+
+# Canvas dimensions
+canvas_width = 1100
+canvas_height = 600
+
 
 def find_scale_factor():
     scale_x = (canvas_width - 2 * margin) / x_room
-    scale_y = (canvas_width - 2 * margin) / x_room
+    scale_y = (canvas_height - 2 * margin) / y_room
     scale_factor = min(scale_x, scale_y)
     return scale_factor
 
@@ -462,21 +457,14 @@ y0_exit_px = find_px_length(y0_exit, scale_factor)
 xf_exit_px = find_px_length(xf_exit, scale_factor)
 yf_exit_px = find_px_length(yf_exit, scale_factor)
 individual_radius_px = find_px_length(individual_radius, scale_factor)
+scale_px = find_px_length(1, scale_factor) # We define a size of 1m for the scale
 
-# Create canvas
-canvas = tk.Canvas(window, width=xRoom_px + 2 * margin, height=yRoom_px + 2 * margin, bg="white")
-canvas.pack()
 
-# Create a frame for the button and label
-controls_frame = tk.Frame(window)
-controls_frame.pack()
-
-# Example usage
 def start_simulation():
     global sheep_array, start_time
 
     # Disable the button after clicking
-    start_button.config(state=tk.DISABLED)
+    button.config(state=tk.DISABLED)
 
     # Record the start time
     start_time = time.time()
@@ -486,7 +474,7 @@ def start_simulation():
 
     # Generate room and random sheeps
     my_library.generateRoom(xRoom_px, yRoom_px, x0_exit_px, y0_exit_px, xf_exit_px, yf_exit_px)
-    sheep_array = my_library.generateRandomSheeps(nbSheep, individual_radius_px)
+    sheep_array = my_library.generateRandomSheeps(num_individuals, individual_radius_px)
 
     # Start the simulation loop
     simulate_movement()
@@ -494,16 +482,35 @@ def start_simulation():
 def simulate_movement():
     global sheep_array, start_time
     # Call moveSheep function
-    result = my_library.moveSheep(nbSheep)
+    result = my_library.moveSheep(num_individuals)
 
     # Clear previous sheep drawings
     canvas.delete("sheep")
 
     canvas.create_rectangle(margin, margin, margin + xRoom_px, margin + yRoom_px, outline="black", width=4)
-    canvas.create_line(x0_exit_px + margin, y0_exit_px + margin, xf_exit_px + margin, yf_exit_px + margin, fill="red", width=4)
+    canvas.create_line(x0_exit_px + margin, y0_exit_px + margin, xf_exit_px + margin, yf_exit_px + margin, fill="white", width=4)
+
+    scale_start_x = margin + xRoom_px - scale_px
+    scale_start_y = margin + yRoom_px + margin/2  # We set the scale to be at the middle of the margin 
+    scale_end_x = margin + xRoom_px
+    scale_end_y = margin + yRoom_px + margin/2  # We set the scale to be at the middle of the margin 
+    canvas.create_line(scale_start_x, scale_start_y, scale_end_x, scale_end_y, fill="black")
+    canvas.create_text(scale_end_x, scale_end_y + 10, text="1m", anchor=tk.E) # 10 = arbitrary value
+
+    edge_size = 4 # 4 = arbitrary value
+    canvas.create_line(scale_start_x, scale_start_y - edge_size, scale_start_x, scale_start_y + edge_size, fill="black")
+    canvas.create_line(scale_end_x, scale_end_y - edge_size, scale_end_x, scale_end_y + edge_size, fill="black")
+
+    x0_axis, y0_axis = margin/2, margin/2
+    xf_axis, yf_axis = margin, margin
+    canvas.create_line(x0_axis, y0_axis, xf_axis, y0_axis, arrow=tk.LAST, fill="blue")
+    canvas.create_line(x0_axis, y0_axis, x0_axis, yf_axis, arrow=tk.LAST, fill="blue")
+    canvas.create_text(xf_axis + 10, y0_axis, text="x", anchor=tk.W, fill="blue")
+    canvas.create_text(x0_axis, yf_axis + 10, text="y", anchor=tk.W, fill="blue")
+
 
     # Draw new sheep positions
-    for i in range(nbSheep):
+    for i in range(num_individuals):
         x, y = result[i].x + margin, result[i].y + margin
         canvas.create_oval(x - individual_radius_px, y - individual_radius_px, x + individual_radius_px, y + individual_radius_px, fill="blue", tags="sheep")
 
@@ -514,26 +521,57 @@ def simulate_movement():
     my_library.freeMatrix(ctypes.cast(result, ctypes.POINTER(Sheep)))
 
     # Check if any sheep is still inside
-    if my_library.sheepStillInside(nbSheep):
+    if my_library.sheepStillInside(num_individuals):
         # Calculate elapsed time
         elapsed_time = time.time() - start_time
         elapsed_time_str = f"Elapsed Time: {int(elapsed_time)} seconds"
         chronometer_label.config(text=elapsed_time_str)
 
         # Schedule the next simulation step
-        window.after(simulation_speed, simulate_movement)
+        window.after(individual_speed, simulate_movement)
     else:
         # Display a message when all sheep have exited
         messagebox.showinfo("Simulation Complete", "All sheep have exited the room.")
 
-# Button to start the simulation
-start_button = tk.Button(controls_frame, text="Start Simulation", command=start_simulation)
-start_button.pack(side=tk.LEFT, padx=5)
+
+
+# Create a frame for the canvas
+canvas_frame = tk.Frame(window, width=canvas_width, height=canvas_height, bg="lightblue")
+canvas_frame.pack(side=tk.TOP, padx=10, pady=10)
+
+# Create a canvas inside the canvas frame
+canvas = tk.Canvas(canvas_frame, width=canvas_width, height=canvas_height, bg="white")
+canvas.pack()
+
+# Create a frame for the button
+button_and_time_frame = tk.Frame(window, height=70)
+button_and_time_frame.pack(side=tk.TOP, pady=10)
+
+# Create a button inside the button frame
+button = tk.Button(button_and_time_frame, text="Start simulation!", command=start_simulation)
+button.pack(side=tk.TOP, anchor=tk.CENTER)
 
 # Label for chronometer
-chronometer_label = tk.Label(controls_frame, text="Elapsed Time: 0 seconds")
-chronometer_label.pack(side=tk.RIGHT, padx=5)
+chronometer_label = tk.Label(button_and_time_frame, text="Elapsed Time: 0 seconds")
+chronometer_label.pack(side=tk.BOTTOM, anchor=tk.CENTER)
 
-# Keep the window open after all sheep exit
+
+# Create a frame for simulation parameters
+parameters_frame = tk.Frame(window, width=50)
+parameters_frame.pack(side=tk.BOTTOM, pady=1)
+
+# Labels to display simulation parameters
+x_room_label = tk.Label(parameters_frame, text=f"Width = {x_room}m;")
+x_room_label.grid(row=0, column=0, pady=1)
+y_room_label = tk.Label(parameters_frame, text=f"Height = {y_room}m;")
+y_room_label.grid(row=1, column=0, pady=1)
+radius_label = tk.Label(parameters_frame, text=f"Individual Diameter = {individual_radius*2}m;")
+radius_label.grid(row=2, column=0, pady=1)
+speed_label = tk.Label(parameters_frame, text=f"Frame of the simulation = {individual_speed};")
+speed_label.grid(row=0, column=1, pady=1)
+num_individuals_label = tk.Label(parameters_frame, text=f"Number of individuals = {num_individuals};")
+num_individuals_label.grid(row=1, column=1, pady=1)
+exit_label = tk.Label(parameters_frame, text=f"Exit length = {exit_length}m;")
+exit_label.grid(row=2, column=1, pady=1)
+
 window.mainloop()
-
