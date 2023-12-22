@@ -1,7 +1,7 @@
 # Crowd Dynamics Simulation
 
 ## Project description
-This repository contains C code for simulating the movement of sheep in a room. The simulation includes forces that drive the sheep towards an exit door while avoiding collisions with each other and the room walls.
+This repository contains C code for simulating the movement of individuals in a closed area. The simulation includes forces that drive the individual towards an exit door while avoiding collisions with each other and the room walls.
 
 ## Project structure
 [code/](./code) : This folder contains the program code
@@ -16,13 +16,17 @@ This repository contains C code for simulating the movement of sheep in a room. 
 * A matric of coordinate x and y is passed from C to Python
 
 ## Instruction
-To view the simulation run the Python code, it will :
-* Compile the C code into a `.so` library
+You can view the simulation by simply running the Python code. It will actually :
+* Compile the C code into a `.so` library (stored in : [bin/](./bin))
 * Directly run the simulation once it's done
 
-## Requirements
+You can modify the default parameter in the asked field of the GUI at the beginning to simulate different crowd in different room sizes.
 
-The code requires no instalation on python side, it can be run directcly (as `tkinter` is usually by default installed with python)
+## Requirements
+As we use C and Python the two languages should be installed.
+The code requires no further instalation as `tkinter` is usually by default installed with python.
+
+The version used are the following :
 
 ```
 $ python --version
@@ -31,6 +35,29 @@ Python 3.11.5
 $ gcc --version
 gcc.exe (Rev2, Built by MSYS2 project) 13.2.0
 ```
+
+But it should work with any above versions.
+
+
+## Parameters that can be modified by the user
+
+### Simulation Parameters
+
+- **Number of Individuals:** The total number of individuals in the simulation.
+
+- **Individual Type:** The type of individuals in the simulation (e.g., Human, Cow, Ant, Sheep, Elephant). This modifies the radius of the individuals.
+
+- **Individual Speed:** The delay between each move of an individual in milliseconds (refreshrate of the canva).
+
+### Room Configuration
+
+- **Room Width and Height:** The dimensions of the simulated room in meters.
+
+- **Exit Type:** The type of exit in the room (e.g., Standard door, Double door, Ant nest hole, Paddock gate).
+
+- **Wall for Exit:** The wall on which the exit is located (e.g., Right, Left, Top, Bottom).
+
+- **Exit Coordinates:** The position along the chosen wall where the exit is located.
 
 
 ## C file
@@ -55,9 +82,12 @@ gcc.exe (Rev2, Built by MSYS2 project) 13.2.0
 * generateRandomSheeps: Generates random initial positions for sheep, avoiding overlaps.
 * generateRoom: Initializes the room structure with specified dimensions and exit location.
 * sheepStillInside: Checks if any sheep is still inside the room.
-* freeMatrix: Frees memory allocated for the sheep matrix.
+* freeMatrix: Frees memory allocated for the Sheep matrix.
+* freePoint : Frees memory allocated for the Point matrix.
 
-## Usage
+
+## Python file
+
 
 
 Hwo to use C in python :
