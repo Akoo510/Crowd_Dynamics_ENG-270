@@ -1,115 +1,100 @@
-# Pour la GUI
+##################### CMT PROJECT ###########################
+
+# Tom Jeannin
+# Victoria Véronique Marie Wattel
+
+############# CROWD DYNAMICS SIMULATION #####################
+
+
+## LIBRARIES ##
+
+# For the GUI
 import tkinter as tk
 from tkinter import ttk, messagebox
 from math import pi
-from tkinter import Toplevel
+import time
 
-# Pour la shared library :
+# For the shared library :
 import subprocess
 import ctypes
 
-import time 
+## AUTOMATIC COMPILATION OF THE C CODE ##
 
-# Compile automatically to create the shared library
-
-import subprocess
-import ctypes
-
-# Step 1: Compile C code to create shared library (.so file)
 def compile_c_code():
     compile_command = "gcc -shared -o 10_theCode.so 10_theCode.c"
     subprocess.run(compile_command, shell=True)
 
-# Step 2: Load the shared library using ctypes
 def load_shared_library():
     try:
-        # Load the shared library
         c_lib = ctypes.CDLL("./10_theCode.so")
-
         return c_lib
     except OSError:
         print("Error: Unable to load the shared library.")
         return None
-    
 
+# Compilation of the C code
 compile_c_code()
 my_library = load_shared_library()
 
 
-# Define C structures in Python
+## DEFINITION OF THE SHARED LIBRARY ELEMENTS ##
+
+# Definition of the shared library structures in Python
 class Force(ctypes.Structure):
     _fields_ = [("fx", ctypes.c_double),
                 ("fy", ctypes.c_double)]
-
 class Sheep(ctypes.Structure):
     _fields_ = [("x", ctypes.c_double),
                 ("y", ctypes.c_double),
                 ("r", ctypes.c_double),
                 ("force", Force),
                 ("inRoom", ctypes.c_bool)]
-
 class Point(ctypes.Structure):
     _fields_ = [("x", ctypes.c_double),
                 ("y", ctypes.c_double)]
-
 class Line(ctypes.Structure):
     _fields_ = [("start", Point),
                 ("end", Point)]
-
 class Room(ctypes.Structure):
     _fields_ = [("exitRoom", Line),
                 ("sizeRoom", Point)]
     
-    
-#my_library = ctypes.CDLL(os.path.join(os.path.dirname(__file__), '10_theCode.so'))
-#my_library = ctypes.CDLL(os.path.join(os.path.dirname(__file__), '09_finalTom.so'))
-
-# Seed random generator function
+# Definition of the shared library functions in Python
 my_library.seedRandomGenerator.argtypes = [ctypes.c_uint]
-
-# Function to generate the room
 my_library.generateRoom.argtypes = [ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double, ctypes.c_double]
-
-# Function to generate random sheeps
 my_library.generateRandomSheeps.argtypes = [ctypes.c_int, ctypes.c_double]
 my_library.generateRandomSheeps.restype = ctypes.POINTER(Sheep)
-
-# Function to check if any sheep is still inside the room
 my_library.sheepStillInside.argtypes = [ctypes.c_int]
 my_library.sheepStillInside.restype = ctypes.c_int
-
-# Function to move sheeps and return their coordinates
 my_library.moveSheep.argtypes = [ctypes.c_int]
 my_library.moveSheep.restype = ctypes.POINTER(Point)
-
-# Function to free matrix memory
 my_library.freeMatrix.argtypes = [ctypes.POINTER(Sheep)]
 
 
+## DATA ENTRY FORM ##
+
 class DataEntryForm:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Data Entry Form")
+    def __init__(self, data_entry_form_window):
+        self.data_entry_form_window = data_entry_form_window
+        self.data_entry_form_window.title("Data Entry Form")
 
         self.individual_speed = None
         self.num_individuals = None
 
-        self.step = 1  # Initial step
+        self.step = 1
 
-        # Initialize variables to store user inputs
+        # Initialization of variables to store the user inputs
         self.individual_vars = {
             'num_individuals': tk.StringVar(),
             'individual_type': tk.StringVar(),
-            'individual_speed': tk.StringVar()
+            'individual_speed': tk.StringVar(),
         }
-
         self.room_vars = {
             'x_room': tk.StringVar(),
             'y_room': tk.StringVar(),
             'exit_type': tk.StringVar(),
             'wall': tk.StringVar(),
         }
-
         self.exit_coords_vars = {
             'exit_coords': tk.StringVar(),
         }
@@ -122,7 +107,6 @@ class DataEntryForm:
             "Ant": 0.002,
             "Elephant": 1.5,
         }
-
         # Dictionary for exit dimensions
         self.exit_dict = {
             "Standard door": 0.8,
@@ -142,21 +126,21 @@ class DataEntryForm:
             self.create_step3_widgets()
 
     def create_step1_widgets(self):
-        frame = tk.Frame(self.root)
+        frame = tk.Frame(self.data_entry_form_window)
         frame.pack(padx=10, pady=10)
 
-        nb_individuals_label = tk.Label(frame, text="Number of individuals wanted")
+        nb_individuals_label = tk.Label(frame, text="Number of individuals wanted :")
         nb_individuals_entry = tk.Entry(frame, textvariable=self.individual_vars['num_individuals'])
         nb_individuals_label.grid(row=0, column=0, padx=5, pady=5)
         nb_individuals_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        type_individuals_label = tk.Label(frame, text="Individual type wanted")
+        type_individuals_label = tk.Label(frame, text="Individual type wanted :")
         type_individuals_combobox = ttk.Combobox(frame, values=['Human', 'Cow', 'Ant', 'Sheep', 'Elephant'],
                                                 textvariable=self.individual_vars['individual_type'], state='readonly')
         type_individuals_label.grid(row=1, column=0, padx=5, pady=5)
         type_individuals_combobox.grid(row=1, column=1, padx=5, pady=5)
 
-        speed_individuals_label = tk.Label(frame, text="Speed of the individuals [ms]")
+        speed_individuals_label = tk.Label(frame, text="Delay between each move [ms] :")
         speed_individuals_entry = tk.Entry(frame, textvariable=self.individual_vars['individual_speed'])
         speed_individuals_label.grid(row=2, column=0, padx=5, pady=5)
         speed_individuals_entry.grid(row=2, column=1, padx=5, pady=5)
@@ -165,26 +149,26 @@ class DataEntryForm:
         validate_button.grid(row=3, column=0, columnspan=2, pady=10)
 
     def create_step2_widgets(self):
-        frame = tk.Frame(self.root)
+        frame = tk.Frame(self.data_entry_form_window)
         frame.pack(padx=10, pady=10)
 
-        x_room_label = tk.Label(frame, text="Choose the length of the room")
+        x_room_label = tk.Label(frame, text="Choose the length of the room [m] :")
         x_room_entry = tk.Entry(frame, textvariable=self.room_vars['x_room'])
         x_room_label.grid(row=0, column=0, padx=5, pady=5)
         x_room_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        y_room_label = tk.Label(frame, text="Choose the height of the room")
+        y_room_label = tk.Label(frame, text="Choose the height of the room [m] :")
         y_room_entry = tk.Entry(frame, textvariable=self.room_vars['y_room'])
         y_room_label.grid(row=1, column=0, padx=5, pady=5)
         y_room_entry.grid(row=1, column=1, padx=5, pady=5)
 
-        exit_type_label = tk.Label(frame, text="Exit type wanted")
+        exit_type_label = tk.Label(frame, text="Exit type wanted [m] :")
         exit_type_combobox = ttk.Combobox(frame, values=['Standard door', 'Double door', 'Ant nest hole', 'Paddock gate'],
                                           textvariable=self.room_vars['exit_type'], state='readonly')
         exit_type_label.grid(row=2, column=0, padx=5, pady=5)
         exit_type_combobox.grid(row=2, column=1, padx=5, pady=5)
 
-        wall_label = tk.Label(frame, text="Wall wanted for the exit")
+        wall_label = tk.Label(frame, text="Wall wanted for the exit :")
         wall_combobox = ttk.Combobox(frame, values=['Right', 'Left', 'Top', 'Bottom'], textvariable=self.room_vars['wall'], state='readonly')
         wall_label.grid(row=3, column=0, padx=5, pady=5)
         wall_combobox.grid(row=3, column=1, padx=5, pady=5)
@@ -193,10 +177,10 @@ class DataEntryForm:
         validate_button.grid(row=4, column=0, columnspan=2, pady=10)
 
     def create_step3_widgets(self):
-        frame = tk.Frame(self.root)
+        frame = tk.Frame(self.data_entry_form_window)
         frame.pack(padx=10, pady=10)
 
-        exit_coords_label = tk.Label(frame, text="Choose the length at which you want the exit to be on the wall")
+        exit_coords_label = tk.Label(frame, text="Choose the length at which you want the exit to be on the wall [m] :")
         exit_coords_entry = tk.Entry(frame, textvariable=self.exit_coords_vars['exit_coords'])
         exit_coords_label.grid(row=0, column=0, padx=5, pady=5)
         exit_coords_entry.grid(row=0, column=1, padx=5, pady=5)
@@ -205,21 +189,19 @@ class DataEntryForm:
         validate_button.grid(row=1, column=0, columnspan=2, pady=10)
 
     def validate_step1(self):
-        # Validate step 1 inputs
         num_individuals = self.individual_vars['num_individuals'].get()
         individual_type = self.individual_vars['individual_type'].get()
         individual_speed = self.individual_vars['individual_speed'].get()
 
         if not num_individuals.isdigit() or int(num_individuals) == 0 or not individual_type or not individual_speed.isdigit() or int(individual_speed) == 0:
-            messagebox.showwarning(title="Error", message="Invalid input. Please enter valid, positive and non-zero integers.")
+            messagebox.showwarning(title="Error", message="Invalid input. \nPlease enter valid, positive and non-zero integers.")
         else:
-            # If validation is successful, move to the next step, disable step 1 widgets, and create step 2 widgets
+            # If validation is successful, we can move to the next step, disable step 1 widgets, and create step 2 widgets
             self.disable_step1_widgets()
             self.step += 1
             self.create_widgets()
 
     def validate_step2(self):
-        # Validate step 2 inputs
         x_room_str = self.room_vars['x_room'].get()
         y_room_str = self.room_vars['y_room'].get()
         exit_type = self.room_vars['exit_type'].get()
@@ -234,72 +216,68 @@ class DataEntryForm:
             num_individuals = int(num_individuals_str)
             individual_speed = int(individual_speed_str)
         except ValueError:
-            messagebox.showwarning(title="Error", message="Invalid input. Please enter valid numeric values for room dimensions and number of individuals.")
+            messagebox.showwarning(title="Error", message="Invalid input. \nPlease enter valid numeric values\nRoom dimensions must be positive and non-zero floats.")
             return
 
-        if not x_room > 0 or not y_room > 0 or not exit_type or not wall or not num_individuals > 0:
-            messagebox.showwarning(title="Error", message="Invalid input. Please enter valid values.")
+        if not x_room > 0 or not y_room > 0 or not exit_type or not wall : #or not num_individuals > 0:
+            messagebox.showwarning(title="Error", message="Invalid input. \nPlease enter valid values. \nRoom dimensions must be positive and non-zero floats.\nThe exit type must be selected.")
         elif self.radius_dict[individual_type]*2 > self.exit_dict[exit_type]:
-            messagebox.showwarning(title="Error", message=f"Chosen exit type must be greater than or equal to the diameter of the {individual_type}.")
+            messagebox.showwarning(title="Error", message=f"Invalid input.\Chosen exit type must be greater than or equal to the diameter of the {individual_type}.\n Please select an adapted exit type. ")
         else:
-            # Calculate the total area required for the individuals
+            # Calculating the total area required for the individuals
             total_area_required = num_individuals * (pi * self.radius_dict[individual_type] ** 2)
-
-            # Check if the room area is sufficient
+            # Checking if the room area is sufficient
             if x_room * y_room < total_area_required:
-                messagebox.showwarning(title="Error", message="Room dimensions are too small to accommodate all individuals.")
+                messagebox.showwarning(title="Error", message=f"Invalid input. \nRoom area is too small to accommodate all individuals.\n Reminder : \n Diameter of the {individual_type} = {pi * self.radius_dict[individual_type] ** 2}m. ")
             else:
-            # Store additional attributes for later use
+            # Storing additional attributes for later use
                 self.individual_speed = int(individual_speed)
                 self.num_individuals = int(num_individuals)
 
-                # If all conditions are met, move to the next step, disable step 2 widgets, and create step 3 widgets
+                # If all conditions are met, we can move to the next step, disable step 2 widgets, and create step 3 widgets
                 self.disable_step2_widgets()
                 self.step += 1
                 self.create_widgets()
 
     def validate_step3(self):
-        # Validate step 3 inputs
         exit_coords_str = self.exit_coords_vars['exit_coords'].get()
-
         try:
             exit_coords = float(exit_coords_str)
         except ValueError:
-            messagebox.showwarning(title="Error", message="Invalid input. Please enter a valid numeric value for exit coordinates.")
+            messagebox.showwarning(title="Error", message="Invalid input. \nPlease enter a valid float for exit coordinates.")
             return
 
         # Validate additional condition for exit coordinates
         x_room = float(self.room_vars['x_room'].get())
         y_room = float(self.room_vars['y_room'].get())
         wall = self.room_vars['wall'].get()
-
         exit_half_length = self.exit_dict[self.room_vars['exit_type'].get()] / 2
 
         if wall == "Left" or wall == "Right":
             if not 0 <= exit_coords <= y_room:
-                messagebox.showwarning(title="Warning", message="Exit coordinates must be between 0 and room height.")
+                messagebox.showwarning(title="Error", message=f"Invalid input.\nExit coordinates must be between 0 and {y_room}(chosen room height).")
                 return
             if not 0 + exit_half_length <= exit_coords <= y_room - exit_half_length:
-                messagebox.showwarning(title="Warning", message=f"The chosen exit type exceeds the size of the {wall} wall at this position. It must be at least at +/- {exit_half_length}m from the edge of the wall.")
+                messagebox.showwarning(title="Error", message=f"Invalid input.\nThe chosen exit type exceeds the size of the {wall} wall at this position. \nIt must be at least at +/- {exit_half_length}m from the edge of the wall.")
                 return
         elif wall == "Top" or wall == "Bottom":
             if not 0 <= exit_coords <= x_room:
-                messagebox.showwarning(title="Warning", message="Exit coordinates must be between 0 and room length.")
+                messagebox.showwarning(title="Error", message=f"Invalid input.\nExit coordinates must be between 0 and {x_room}(chosen room length).")
                 return
             if not 0 + exit_half_length <= exit_coords <= x_room - exit_half_length:
-                messagebox.showwarning(title="Warning", message=f"The chosen exit type exceeds the size of the {wall} at this position. It must be at least {exit_half_length}m from the edge of the wall.")
+                messagebox.showwarning(title="Error", message=f"The chosen exit type exceeds the size of the {wall} at this position. It must be at least {exit_half_length}m from the edge of the wall.")
                 return
 
-        # If all conditions are met, perform the simulation and show an info message
+        # If all conditions are met, we can perform the simulation and show an info message
         self.perform_simulation()
-        # Disable step 3 widgets after successful validation
+        # Disabling step 3 widgets after successful validation
         self.disable_step3_widgets()
-        # Show info message after disabling step 3 widgets
+        # Showing info message after disabling step 3 widgets
         messagebox.showinfo(title="Data Entry Form completed", message="To start simulation, please close this information window and the Data Entry Form.")
 
     def disable_step1_widgets(self):
-        # Disable step 1 widgets
-        for widget in self.root.winfo_children():
+        # Disabling step 1 widgets
+        for widget in self.data_entry_form_window.winfo_children():
             if isinstance(widget, tk.Frame):
                 for child_widget in widget.winfo_children():
                     if isinstance(child_widget, tk.Entry) and child_widget != self.individual_vars['num_individuals']:
@@ -312,8 +290,8 @@ class DataEntryForm:
                         child_widget.config(state='disabled')
 
     def disable_step2_widgets(self):
-        # Disable step 2 widgets
-        for widget in self.root.winfo_children():
+        # Disabling step 2 widgets
+        for widget in self.data_entry_form_window.winfo_children():
             if isinstance(widget, tk.Frame):
                 for child_widget in widget.winfo_children():
                     if isinstance(child_widget, tk.Entry) and (child_widget != self.room_vars['x_room'] and child_widget != self.room_vars['y_room']):
@@ -324,8 +302,8 @@ class DataEntryForm:
                         child_widget.config(state='disabled')
 
     def disable_step3_widgets(self):
-        # Disable step 3 widgets
-        for widget in self.root.winfo_children():
+        # Disabling step 3 widgets
+        for widget in self.data_entry_form_window.winfo_children():
             if isinstance(widget, tk.Frame):
                 for child_widget in widget.winfo_children():
                     if isinstance(child_widget, tk.Entry) and child_widget != self.exit_coords_vars['exit_coords']:
@@ -343,7 +321,7 @@ class DataEntryForm:
         try:
             exit_coords = float(exit_coords_str)
         except ValueError:
-            messagebox.showwarning(title="Error", message="Invalid input. Please enter a valid numeric value for exit coordinates.")
+            messagebox.showwarning(title="Error", message="Invalid input.\n Please enter a valid numeric value for exit coordinates.")
             return
 
         exit_coords_function = self.exit_coordinates(exit_type, exit_coords, x_room, y_room, wall)
@@ -351,11 +329,8 @@ class DataEntryForm:
             x0_exit, y0_exit, xf_exit, yf_exit = exit_coords_function
         else:
             return
-
-        # Create the resizable window with the correct exit coordinates
-        #resizable_window = ResizableWindow(tk.Toplevel(self.root), x_room, y_room, (x0_exit, y0_exit, xf_exit, yf_exit), self.individual_speed, self.num_individuals)
-
-        # Disable step 3 widgets after successful validation
+        
+        # Disabling step 3 widgets after successful validation
         self.disable_step3_widgets()
 
     def exit_coordinates(self, exit_type, exit_coords, x_room, y_room, wall):
@@ -380,10 +355,6 @@ class DataEntryForm:
 
         return x0_exit, y0_exit, xf_exit, yf_exit
 
-    def perform_simulation(self):
-        # Create the resizable window and perform simulation logic here
-        self.final_step_data_entry()
-
     def get_room_dimensions(self):
         x_room = float(self.room_vars['x_room'].get())
         y_room = float(self.room_vars['y_room'].get())
@@ -404,12 +375,14 @@ class DataEntryForm:
             self.room_vars['wall'].get()
         )
         return x0_exit, y0_exit, xf_exit, yf_exit
-
+    
+    def perform_simulation(self):
+        self.final_step_data_entry()
 
 if __name__ == "__main__": 
-    root = tk.Tk()
-    app = DataEntryForm(root)
-    root.mainloop()
+    data_entry_form_window = tk.Tk()
+    app = DataEntryForm(data_entry_form_window)
+    data_entry_form_window.mainloop()
 
     x_room, y_room = app.get_room_dimensions()
     num_individuals, individual_speed, individual_radius = app.get_simulation_parameters()
@@ -419,24 +392,23 @@ if __name__ == "__main__":
     print("Simulation Parameters:", num_individuals, individual_speed, individual_radius)
     print("Exit Coordinates:", x0_exit, y0_exit, xf_exit, yf_exit)
 
-
-########################################
+## DEFINITION OF THE SIMULATION ##
 
 margin = 50
 seed = int(time.time())
-sheep_array = None  # To store the array of sheep
-start_time = None  # To store the start time
+sheep_array = None 
+start_time = None 
 
 exit_length = max(xf_exit - x0_exit, yf_exit - y0_exit)
 
-window = tk.Tk()
-window.title("Crowd Movement Simulation")
-window.geometry("1200x700") # arbitrary value
+# Window dimensions (fixed values)
+simulation_window = tk.Tk()
+simulation_window.title("Crowd Movement Simulation")
+simulation_window.geometry("1200x700")
 
-# Canvas dimensions
+# Canvas dimensions (fixed values)
 canvas_width = 1100
 canvas_height = 600
-
 
 def find_scale_factor():
     scale_x = (canvas_width - 2 * margin) / x_room
@@ -444,12 +416,11 @@ def find_scale_factor():
     scale_factor = min(scale_x, scale_y)
     return scale_factor
 
-scale_factor = find_scale_factor()
-
 def find_px_length(size_in_meters, scale_factor):
     size_in_px = size_in_meters * scale_factor
     return size_in_px
 
+scale_factor = find_scale_factor()
 xRoom_px = find_px_length(x_room, scale_factor)
 yRoom_px = find_px_length(y_room, scale_factor)
 x0_exit_px = find_px_length(x0_exit, scale_factor)
@@ -457,36 +428,39 @@ y0_exit_px = find_px_length(y0_exit, scale_factor)
 xf_exit_px = find_px_length(xf_exit, scale_factor)
 yf_exit_px = find_px_length(yf_exit, scale_factor)
 individual_radius_px = find_px_length(individual_radius, scale_factor)
-scale_px = find_px_length(1, scale_factor) # We define a size of 1m for the scale
 
+ # We define a size of 1m for the scale
+scale_px = find_px_length(1, scale_factor)
 
+# Using the shared library functions 
 def start_simulation():
     global sheep_array, start_time
 
-    # Disable the button after clicking
+    # Disabling the button after clicking
     button.config(state=tk.DISABLED)
 
-    # Record the start time
+    # Recording the start time
     start_time = time.time()
 
-    # Seed random generator
+    # Seeding random generator
     my_library.seedRandomGenerator(seed)
 
-    # Generate room and random sheeps
+    # Generating room and random sheeps
     my_library.generateRoom(xRoom_px, yRoom_px, x0_exit_px, y0_exit_px, xf_exit_px, yf_exit_px)
     sheep_array = my_library.generateRandomSheeps(num_individuals, individual_radius_px)
 
-    # Start the simulation loop
+    # Starting the simulation loop
     simulate_movement()
 
 def simulate_movement():
     global sheep_array, start_time
-    # Call moveSheep function
+
     result = my_library.moveSheep(num_individuals)
 
-    # Clear previous sheep drawings
+    # Clearing previous sheep drawings
     canvas.delete("sheep")
 
+    # Drawing elements on the canva
     canvas.create_rectangle(margin, margin, margin + xRoom_px, margin + yRoom_px, outline="black", width=4)
     canvas.create_line(x0_exit_px + margin, y0_exit_px + margin, xf_exit_px + margin, yf_exit_px + margin, fill="white", width=4)
 
@@ -508,59 +482,53 @@ def simulate_movement():
     canvas.create_text(xf_axis + 10, y0_axis, text="x", anchor=tk.W, fill="blue")
     canvas.create_text(x0_axis, yf_axis + 10, text="y", anchor=tk.W, fill="blue")
 
-
-    # Draw new sheep positions
+    # Drawing new sheep positions
     for i in range(num_individuals):
         x, y = result[i].x + margin, result[i].y + margin
         canvas.create_oval(x - individual_radius_px, y - individual_radius_px, x + individual_radius_px, y + individual_radius_px, fill="blue", tags="sheep")
 
-    # Update the canvas
-    window.update()
+    # Updating the canvas
+    simulation_window.update()
 
-    # Free allocated memory using the correct type
+    # Important ! : free allocated memory using the correct type
     my_library.freeMatrix(ctypes.cast(result, ctypes.POINTER(Sheep)))
 
-    # Check if any sheep is still inside
+    # Checking if any sheep is still inside
     if my_library.sheepStillInside(num_individuals):
-        # Calculate elapsed time
+        # Calculating elapsed time
         elapsed_time = time.time() - start_time
         elapsed_time_str = f"Elapsed Time: {int(elapsed_time)} seconds"
         chronometer_label.config(text=elapsed_time_str)
 
-        # Schedule the next simulation step
-        window.after(individual_speed, simulate_movement)
+        # Scheduling the next simulation step
+        simulation_window.after(individual_speed, simulate_movement)
     else:
-        # Display a message when all sheep have exited
+        # Showing the message that all sheep have exited the room
         messagebox.showinfo("Simulation Complete", "All sheep have exited the room.")
 
-
-
-# Create a frame for the canvas
-canvas_frame = tk.Frame(window, width=canvas_width, height=canvas_height, bg="lightblue")
+# Creation of elements and frames in the window
+        
+# Canva frame : 
+canvas_frame = tk.Frame(simulation_window, width=canvas_width, height=canvas_height, bg="lightblue")
 canvas_frame.pack(side=tk.TOP, padx=10, pady=10)
 
-# Create a canvas inside the canvas frame
 canvas = tk.Canvas(canvas_frame, width=canvas_width, height=canvas_height, bg="white")
 canvas.pack()
 
-# Create a frame for the button
-button_and_time_frame = tk.Frame(window, height=70)
+# Button and elapsed time frame :
+button_and_time_frame = tk.Frame(simulation_window, height=70)
 button_and_time_frame.pack(side=tk.TOP, pady=10)
 
-# Create a button inside the button frame
 button = tk.Button(button_and_time_frame, text="Start simulation!", command=start_simulation)
 button.pack(side=tk.TOP, anchor=tk.CENTER)
 
-# Label for chronometer
 chronometer_label = tk.Label(button_and_time_frame, text="Elapsed Time: 0 seconds")
 chronometer_label.pack(side=tk.BOTTOM, anchor=tk.CENTER)
 
-
-# Create a frame for simulation parameters
-parameters_frame = tk.Frame(window, width=50)
+# Simulation parameters frame :
+parameters_frame = tk.Frame(simulation_window, width=50)
 parameters_frame.pack(side=tk.BOTTOM, pady=1)
 
-# Labels to display simulation parameters
 x_room_label = tk.Label(parameters_frame, text=f"Width = {x_room}m;")
 x_room_label.grid(row=0, column=0, pady=1)
 y_room_label = tk.Label(parameters_frame, text=f"Height = {y_room}m;")
@@ -574,4 +542,5 @@ num_individuals_label.grid(row=1, column=1, pady=1)
 exit_label = tk.Label(parameters_frame, text=f"Exit length = {exit_length}m;")
 exit_label.grid(row=2, column=1, pady=1)
 
-window.mainloop()
+# Running the simulation 
+simulation_window.mainloop()
