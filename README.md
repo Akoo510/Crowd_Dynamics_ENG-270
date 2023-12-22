@@ -6,7 +6,21 @@ This repository contains C code for simulating the movement of sheep in a room. 
 ## Project structure
 [code/](./code) : This folder contains the program code
 [bin/](./bin) : This folder contains the library created after compiling C code
-[code/](./code) :
+[versioning/](./versioning) : This folder contains all the past version, and different implmentation tried (as object avoidance for example)
+
+## Implementation
+* The calculation of the position is done by C and is then given to Python via a shared library that can be used by the `ctypes` module.
+* Python actually renders the simulation
+* A matric of coordinate x and y is passed from C to Python
+
+## Instruction
+To view the simulation run the Python code, it will :
+* Compile the C code into a `.so` library
+* Directly run the simulation once it's done
+
+## Requirements
+
+`> command-line-command`
 
 
 ## C file
