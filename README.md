@@ -10,6 +10,7 @@ This repository contains C code for simulating the movement of sheep in a room. 
 * Point: Defines a point in 2D space with x and y coordinates.
 * Line: Represents a line segment with start and end points.
 * Room: Describes the simulation room, including the exit door and room size.
+
 #### Functions:
 
 * seedRandomGenerator: Seeds the random number generator.
