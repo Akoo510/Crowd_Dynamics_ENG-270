@@ -396,9 +396,6 @@ if __name__ == "__main__":
     num_individuals, individual_speed, individual_radius = app.get_simulation_parameters()
     x0_exit, y0_exit, xf_exit, yf_exit = app.get_exit_coordinates()
 
-    print("Room Dimensions:", x_room, y_room)
-    print("Simulation Parameters:", num_individuals, individual_speed, individual_radius)
-    print("Exit Coordinates:", x0_exit, y0_exit, xf_exit, yf_exit)
 
 ## DEFINITION OF THE SIMULATION ##
 
