@@ -22,8 +22,11 @@ To view the simulation run the Python code, it will :
 
 ## Requirements
 
-**`lolilil`**
-`> command-line-command`
+```$ python --version
+Python 3.11.5
+
+$ gcc --version
+gcc.exe (Rev2, Built by MSYS2 project) 13.2.0```
 
 
 ## C file
