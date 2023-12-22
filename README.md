@@ -1,15 +1,16 @@
 # Sheep Movement Simulation
 This repository contains C code for simulating the movement of sheep in a room. The simulation includes forces that drive the sheep towards an exit door while avoiding collisions with each other and the room walls.
 
-## Features
-### Structures:
+## C file
+### Features
+#### Structures:
 
 * Force: Represents a force vector with fx and fy components.
 * Sheep: Describes a sheep with coordinates (x, y), radius (r), force (force), and a flag indicating whether it's in the room (inRoom).
 * Point: Defines a point in 2D space with x and y coordinates.
 * Line: Represents a line segment with start and end points.
 * Room: Describes the simulation room, including the exit door and room size.
-### Functions:
+#### Functions:
 
 * seedRandomGenerator: Seeds the random number generator.
 * roomExitSide: Determines the side of the room where the exit door is located.
