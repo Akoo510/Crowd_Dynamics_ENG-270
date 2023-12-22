@@ -8,7 +8,7 @@
 
 ## LIBRARIES ##
 
-# For the GUI : 
+# For the GUI
 import tkinter as tk
 from tkinter import ttk, messagebox
 from math import pi
@@ -18,27 +18,19 @@ import time
 import subprocess
 import ctypes
 
-# For the absolute path :
-import os
-from pathlib import Path
-
 ## AUTOMATIC COMPILATION OF THE C CODE ##
 
 def compile_c_code():
-    parent_dir = Path(os.getcwd())
-    compile_command = f"gcc -shared -o {parent_dir}/bin/cfunctions.so {parent_dir}/code/cfunctions.c"
+    compile_command = "gcc -shared -o 10_theCode.so 10_theCode.c"
     subprocess.run(compile_command, shell=True)
 
 def load_shared_library():
     try:
-        parent_dir = Path(os.getcwd())
-        lib_path = f"{parent_dir}/bin/cfunctions.so"
-        c_lib = ctypes.CDLL(lib_path)
+        c_lib = ctypes.CDLL("./10_theCode.so")
         return c_lib
-    except OSError as e:
-        print(f"Error: Unable to load the shared library. Details: {e}")
+    except OSError:
+        print("Error: Unable to load the shared library.")
         return None
-
 
 # Compilation of the C code
 compile_c_code()
@@ -76,7 +68,7 @@ my_library.sheepStillInside.argtypes = [ctypes.c_int]
 my_library.sheepStillInside.restype = ctypes.c_int
 my_library.moveSheep.argtypes = [ctypes.c_int]
 my_library.moveSheep.restype = ctypes.POINTER(Point)
-my_library.freePoint.argtypes = [ctypes.POINTER(Point)]
+my_library.freeMatrix.argtypes = [ctypes.POINTER(Sheep)]
 
 
 ## DATA ENTRY FORM ##
@@ -477,7 +469,7 @@ def simulate_movement():
     simulation_window.update()
 
     # Important ! : free allocated memory using the correct type
-    my_library.freePoint(ctypes.cast(result, ctypes.POINTER(Point)))
+    my_library.freeMatrix(ctypes.cast(result, ctypes.POINTER(Sheep)))
 
     # Checking if any sheep is still inside
     if my_library.sheepStillInside(num_individuals):
