@@ -468,28 +468,6 @@ def simulate_movement():
     # Clearing previous sheep drawings
     canvas.delete("sheep")
 
-    # Drawing elements on the canva
-    canvas.create_rectangle(margin, margin, margin + xRoom_px, margin + yRoom_px, outline="black", width=4)
-    canvas.create_line(x0_exit_px + margin, y0_exit_px + margin, xf_exit_px + margin, yf_exit_px + margin, fill="white", width=4)
-
-    scale_start_x = margin + xRoom_px - scale_px
-    scale_start_y = margin + yRoom_px + margin/2  # We set the scale to be at the middle of the margin 
-    scale_end_x = margin + xRoom_px
-    scale_end_y = margin + yRoom_px + margin/2  # We set the scale to be at the middle of the margin 
-    canvas.create_line(scale_start_x, scale_start_y, scale_end_x, scale_end_y, fill="black")
-    canvas.create_text(scale_end_x, scale_end_y + 10, text="1m", anchor=tk.E) # 10 = arbitrary value
-
-    edge_size = 4 # 4 = arbitrary value
-    canvas.create_line(scale_start_x, scale_start_y - edge_size, scale_start_x, scale_start_y + edge_size, fill="black")
-    canvas.create_line(scale_end_x, scale_end_y - edge_size, scale_end_x, scale_end_y + edge_size, fill="black")
-
-    x0_axis, y0_axis = margin/2, margin/2
-    xf_axis, yf_axis = margin, margin
-    canvas.create_line(x0_axis, y0_axis, xf_axis, y0_axis, arrow=tk.LAST, fill="blue")
-    canvas.create_line(x0_axis, y0_axis, x0_axis, yf_axis, arrow=tk.LAST, fill="blue")
-    canvas.create_text(xf_axis + 10, y0_axis, text="x", anchor=tk.W, fill="blue")
-    canvas.create_text(x0_axis, yf_axis + 10, text="y", anchor=tk.W, fill="blue")
-
     # Drawing new sheep positions
     for i in range(num_individuals):
         x, y = result[i].x + margin, result[i].y + margin
@@ -522,6 +500,28 @@ canvas_frame.pack(side=tk.TOP, padx=10, pady=10)
 
 canvas = tk.Canvas(canvas_frame, width=canvas_width, height=canvas_height, bg="white")
 canvas.pack()
+
+# Drawing elements on the canva
+canvas.create_rectangle(margin, margin, margin + xRoom_px, margin + yRoom_px, outline="black", width=4)
+canvas.create_line(x0_exit_px + margin, y0_exit_px + margin, xf_exit_px + margin, yf_exit_px + margin, fill="white", width=4)
+
+scale_start_x = margin + xRoom_px - scale_px
+scale_start_y = margin + yRoom_px + margin/2  # We set the scale to be at the middle of the margin 
+scale_end_x = margin + xRoom_px
+scale_end_y = margin + yRoom_px + margin/2  # We set the scale to be at the middle of the margin 
+canvas.create_line(scale_start_x, scale_start_y, scale_end_x, scale_end_y, fill="black")
+canvas.create_text(scale_end_x, scale_end_y + 10, text="1m", anchor=tk.E) # 10 = arbitrary value
+
+edge_size = 4 # 4 = arbitrary value
+canvas.create_line(scale_start_x, scale_start_y - edge_size, scale_start_x, scale_start_y + edge_size, fill="black")
+canvas.create_line(scale_end_x, scale_end_y - edge_size, scale_end_x, scale_end_y + edge_size, fill="black")
+
+x0_axis, y0_axis = margin/2, margin/2
+xf_axis, yf_axis = margin, margin
+canvas.create_line(x0_axis, y0_axis, xf_axis, y0_axis, arrow=tk.LAST, fill="blue")
+canvas.create_line(x0_axis, y0_axis, x0_axis, yf_axis, arrow=tk.LAST, fill="blue")
+canvas.create_text(xf_axis + 10, y0_axis, text="x", anchor=tk.W, fill="blue")
+canvas.create_text(x0_axis, yf_axis + 10, text="y", anchor=tk.W, fill="blue")
 
 # Button and elapsed time frame :
 button_and_time_frame = tk.Frame(simulation_window, height=70)
