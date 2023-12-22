@@ -93,18 +93,18 @@ class DataEntryForm:
 
         # Initialization of variables to store the user inputs
         self.individual_vars = {
-            'num_individuals': tk.StringVar(),
-            'individual_type': tk.StringVar(),
-            'individual_speed': tk.StringVar(),
+            'num_individuals': tk.StringVar(value = "300"),
+            'individual_type': tk.StringVar(value = "Human"),
+            'individual_speed': tk.StringVar(value = "5"),
         }
         self.room_vars = {
-            'x_room': tk.StringVar(),
-            'y_room': tk.StringVar(),
-            'exit_type': tk.StringVar(),
-            'wall': tk.StringVar(),
+            'x_room': tk.StringVar(value = "30.0"),
+            'y_room': tk.StringVar(value = "30.0"),
+            'exit_type': tk.StringVar(value = 'Double door'),
+            'wall': tk.StringVar(value='Right'),
         }
         self.exit_coords_vars = {
-            'exit_coords': tk.StringVar(),
+            'exit_coords': tk.StringVar(value='15.0'),
         }
 
         # Dictionary for individual radius
@@ -489,8 +489,8 @@ def simulate_movement():
         # Scheduling the next simulation step
         simulation_window.after(individual_speed, simulate_movement)
     else:
-        # Showing the message that all sheep have exited the room
-        messagebox.showinfo("Simulation Complete", "All sheep have exited the room.")
+        # Showing the message that all individuals have exited the room
+        messagebox.showinfo("Simulation Complete", "All individuals have exited the room.")
 
 # Creation of elements and frames in the window
         
