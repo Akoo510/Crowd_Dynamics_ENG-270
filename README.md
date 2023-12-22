@@ -10,7 +10,7 @@ This repository contains C code for simulating the movement of individuals in a 
 
 [bin/](./bin) : This folder contains the library created after compiling C code
 
-[versioning/](./versioning) : This folder contains all the past version, and different implmentation tried (as object avoidance for example)
+[versioning/](./versioning) : This folder contains all the past version, and different implementation tried (as object avoidance for example)
 
 ## Implementation
 * The calculation of the position is done by C and is then given to Python via a shared library that can be used by the `ctypes` module.
