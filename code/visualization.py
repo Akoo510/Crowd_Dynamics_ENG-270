@@ -399,7 +399,7 @@ if __name__ == "__main__":
 
 ## DEFINITION OF THE SIMULATION ##
 
-margin = 50
+margin = 50 
 seed = int(time.time())
 sheep_array = None 
 start_time = None 
